@@ -16,4 +16,40 @@
 // MiGo is a process calculi/type that captures the core concurrency features of
 // Go.
 //
+// MiGo types syntax
+//
+// This is the output format of MiGo Types in EBNF.
+//
+//    identifier = [a-zA-Z0-9_.,#/]
+//    digit      = [0-9]
+//    program    = definition* ;
+//    definition = "def " identifier "(" param ")" ":" def-body ;
+//    param      =
+//               | params
+//               ;
+//    params     = identifier
+//               | params "," identifier
+//               ;
+//    def-body   = def-stmt+
+//               ;
+//    prefix     = "send" identifier
+//               | "recv" identifier
+//               | "tau"
+//               ;
+//    def-stmt   = "let" identifier = "newchan" identifier, digit+ ";"
+//               | prefix ";"
+//               | "close" identifier ";"
+//               | "call"  identifier "(" params ")" ";"
+//               | "spawn" identifier "(" params ")" ";"
+//               | "if" def-stmt+ "else" def-stmt+ "endif" ";"
+//               | "select" ( "case" prefix ";" def-stmt* )* "endselect" ";"
+//               ;
+//
+// A MiGo type can be obtained by calling String() function of the Program,
+// see examples below.
+//
+//    p := NewProgram()
+//    // ... add functions
+//    migoType := p.String()
+//
 package migo // import "github.com/nickng/migo"

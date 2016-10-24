@@ -143,7 +143,6 @@ func removeInvalidFns(stmts []Statement, validFns map[string]bool) []Statement {
 }
 
 func (p *Program) String() string {
-	p.CleanUp()
 	var buf bytes.Buffer
 	for _, f := range p.Funcs {
 		if !f.IsEmpty() {
