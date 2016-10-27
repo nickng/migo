@@ -5,16 +5,17 @@ import (
 	"io"
 )
 
-var prog = NewProgram()
+var prog *Program
 %}
 
 %union {
 	str    string
 	num    int
-	stmt   Statement
+	prog   *Program
 	fun    *Function
-	params []*Parameter
+	stmt   Statement
 	stmts  []Statement
+	params []*Parameter
 	cases  [][]Statement
 }
 
@@ -27,12 +28,13 @@ var prog = NewProgram()
 %type <params> params
 %type <stmts> stmts defbody
 %type <cases> cases
+%type <prog> prog
 
 
 %%
 
-prog :      def { prog.AddFunction($1) }
-     | prog def { prog.AddFunction($2) }
+prog :      def { prog = NewProgram(); $$ = prog; prog.AddFunction($1) }
+     | prog def { $1.AddFunction($2) }
      ;
 
 def : DEF IDENT LPAREN params RPAREN COLON defbody { $$ = NewFunction($2); $$.AddParams($4...); $$.AddStmts($7...) }

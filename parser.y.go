@@ -8,17 +8,18 @@ import (
 	"io"
 )
 
-var prog = NewProgram()
+var prog *Program
 
 //line migo.y:11
 type migoSymType struct {
 	yys    int
 	str    string
 	num    int
-	stmt   Statement
+	prog   *Program
 	fun    *Function
-	params []*Parameter
+	stmt   Statement
 	stmts  []Statement
+	params []*Parameter
 	cases  [][]Statement
 }
 
@@ -80,7 +81,7 @@ const migoEofCode = 1
 const migoErrCode = 2
 const migoInitialStackSize = 16
 
-//line migo.y:72
+//line migo.y:74
 // Parse is the entry point to the migo type parser
 func Parse(r io.Reader) (*Program, error) {
 	l := NewLexer(r)
@@ -519,19 +520,21 @@ migodefault:
 
 	case 1:
 		migoDollar = migoS[migopt-1 : migopt+1]
-		//line migo.y:34
+		//line migo.y:36
 		{
+			prog = NewProgram()
+			migoVAL.prog = prog
 			prog.AddFunction(migoDollar[1].fun)
 		}
 	case 2:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:35
+		//line migo.y:37
 		{
-			prog.AddFunction(migoDollar[2].fun)
+			migoDollar[1].prog.AddFunction(migoDollar[2].fun)
 		}
 	case 3:
 		migoDollar = migoS[migopt-7 : migopt+1]
-		//line migo.y:38
+		//line migo.y:40
 		{
 			migoVAL.fun = NewFunction(migoDollar[2].str)
 			migoVAL.fun.AddParams(migoDollar[4].params...)
@@ -539,115 +542,115 @@ migodefault:
 		}
 	case 4:
 		migoDollar = migoS[migopt-0 : migopt+1]
-		//line migo.y:41
+		//line migo.y:43
 		{
 			migoVAL.params = []*Parameter{}
 		}
 	case 5:
 		migoDollar = migoS[migopt-1 : migopt+1]
-		//line migo.y:42
+		//line migo.y:44
 		{
 			migoVAL.params = []*Parameter{&Parameter{Caller: &plainNamedVar{s: migoDollar[1].str}, Callee: &plainNamedVar{s: migoDollar[1].str}}}
 		}
 	case 6:
 		migoDollar = migoS[migopt-3 : migopt+1]
-		//line migo.y:43
+		//line migo.y:45
 		{
 			migoVAL.params = append(migoDollar[1].params, &Parameter{Caller: &plainNamedVar{s: migoDollar[3].str}, Callee: &plainNamedVar{s: migoDollar[3].str}})
 		}
 	case 7:
 		migoDollar = migoS[migopt-1 : migopt+1]
-		//line migo.y:46
+		//line migo.y:48
 		{
 			migoVAL.stmts = []Statement{migoDollar[1].stmt}
 		}
 	case 8:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:47
+		//line migo.y:49
 		{
 			migoVAL.stmts = append(migoDollar[1].stmts, migoDollar[2].stmt)
 		}
 	case 9:
 		migoDollar = migoS[migopt-0 : migopt+1]
-		//line migo.y:50
+		//line migo.y:52
 		{
 			migoVAL.stmts = []Statement{}
 		}
 	case 10:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:51
+		//line migo.y:53
 		{
 			migoVAL.stmts = append(migoDollar[1].stmts, migoDollar[2].stmt)
 		}
 	case 11:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:54
+		//line migo.y:56
 		{
 			migoVAL.stmt = &SendStatement{Chan: migoDollar[2].str}
 		}
 	case 12:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:55
+		//line migo.y:57
 		{
 			migoVAL.stmt = &RecvStatement{Chan: migoDollar[2].str}
 		}
 	case 13:
 		migoDollar = migoS[migopt-1 : migopt+1]
-		//line migo.y:56
+		//line migo.y:58
 		{
 			migoVAL.stmt = &TauStatement{}
 		}
 	case 14:
 		migoDollar = migoS[migopt-8 : migopt+1]
-		//line migo.y:59
+		//line migo.y:61
 		{
 			migoVAL.stmt = &NewChanStatement{Name: &plainNamedVar{s: migoDollar[2].str}, Chan: migoDollar[2].str, Size: int64(migoDollar[7].num)}
 		}
 	case 15:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:60
+		//line migo.y:62
 		{
 			migoVAL.stmt = migoDollar[1].stmt
 		}
 	case 16:
 		migoDollar = migoS[migopt-3 : migopt+1]
-		//line migo.y:61
+		//line migo.y:63
 		{
 			migoVAL.stmt = &CloseStatement{Chan: migoDollar[2].str}
 		}
 	case 17:
 		migoDollar = migoS[migopt-6 : migopt+1]
-		//line migo.y:62
+		//line migo.y:64
 		{
 			migoVAL.stmt = &CallStatement{Name: migoDollar[2].str, Params: migoDollar[4].params}
 		}
 	case 18:
 		migoDollar = migoS[migopt-6 : migopt+1]
-		//line migo.y:63
+		//line migo.y:65
 		{
 			migoVAL.stmt = &SpawnStatement{Name: migoDollar[2].str, Params: migoDollar[4].params}
 		}
 	case 19:
 		migoDollar = migoS[migopt-6 : migopt+1]
-		//line migo.y:64
+		//line migo.y:66
 		{
 			migoVAL.stmt = &IfStatement{Then: migoDollar[2].stmts, Else: migoDollar[4].stmts}
 		}
 	case 20:
 		migoDollar = migoS[migopt-4 : migopt+1]
-		//line migo.y:65
+		//line migo.y:67
 		{
 			migoVAL.stmt = &SelectStatement{Cases: migoDollar[2].cases}
 		}
 	case 21:
 		migoDollar = migoS[migopt-0 : migopt+1]
-		//line migo.y:68
+		//line migo.y:70
 		{
 			migoVAL.cases = [][]Statement{}
 		}
 	case 22:
 		migoDollar = migoS[migopt-5 : migopt+1]
-		//line migo.y:69
+		//line migo.y:71
 		{
 			migoVAL.cases = append(migoDollar[1].cases, append([]Statement{migoDollar[3].stmt}, migoDollar[5].stmts...))
 		}

@@ -2,6 +2,8 @@ package migo_test
 
 import (
 	"fmt"
+	"log"
+	"strings"
 
 	"github.com/nickng/migo"
 )
@@ -56,4 +58,24 @@ func ExampleProgram_CleanUp() {
 	// Output:
 	// def F():
 	//     send x;
+}
+
+// This example demonstrates the use of the Parser.
+// The output should be exactly the same as input (but pretty printed).
+func ExampleParse() {
+	s := `def main.main(): let ch = newchan ch, 0; spawn main.sndr(ch); recv ch;
+	def main.sndr(ch): send ch;`
+	r := strings.NewReader(s)
+	parsed, err := migo.Parse(r)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(parsed.String())
+	// Output:
+	// def main.main():
+	//     let ch = newchan ch, 0;
+	//     spawn main.sndr(ch);
+	//     recv ch;
+	// def main.sndr(ch):
+	//     send ch;
 }
