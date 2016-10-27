@@ -2,6 +2,7 @@ package migo
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -240,6 +241,46 @@ func TestCleanUp2(t *testing.T) {
 		if _, ok := p.Function(removed); ok {
 			t.Error(&ErrFuncExist{f: removed})
 		}
+	}
+}
+
+// This tests CleanUp from an inconsistent state (main.xx#2 is not defined)
+func TestCleanUp3(t *testing.T) {
+	s := `def main.main():
+    let t0 = newchan main.main.t0_0_0, 0;
+    let t1 = newchan main.main.t1_0_0, 0;
+    call main.xx(t0, t1);
+    spawn main.wait(t0);
+    spawn main.wait(t1);
+def main.xx(x, y):
+    if send x; spawn main.xx(y, x); call main.xx#2(x, y); else call main.xx#2(x, y); endif;
+def main.wait(x):
+    call main.wait#1(x);
+def main.wait#1(x):
+    recv x;
+    call main.wait#1(x);`
+	expect := `def main.main():
+    let t0 = newchan t0, 0;
+    let t1 = newchan t1, 0;
+    call main.xx(t0, t1);
+    spawn main.wait(t0);
+    spawn main.wait(t1);
+def main.xx(x, y):
+    if send x; spawn main.xx(y, x); else endif;
+def main.wait(x):
+    call main.wait#1(x);
+def main.wait#1(x):
+    recv x;
+    call main.wait#1(x);`
+	r := strings.NewReader(s)
+	parsed, err := Parse(r)
+	parsed.CleanUp()
+	if err != nil {
+		t.Error(err)
+	}
+	if strings.TrimSpace(parsed.String()) != expect {
+		t.Errorf("Expects main.xx#2 calls to be removed\n--- expect ---\n%s\n--- got ---\n%s\n",
+			expect, parsed.String())
 	}
 }
 

@@ -110,6 +110,9 @@ func (p *Program) CleanUp() {
 	}
 	p.Funcs = fns
 	for _, f := range p.Funcs {
+		f.Stmts = p.removeNonFuncCall(f.Stmts)
+	}
+	for _, f := range p.Funcs {
 		f.Stmts = removeInvalidFns(f.Stmts, validFns)
 	}
 }
@@ -140,6 +143,29 @@ func removeInvalidFns(stmts []Statement, validFns map[string]bool) []Statement {
 		}
 	}
 	return validStmts
+}
+
+func (p *Program) removeNonFuncCall(stmts []Statement) []Statement {
+	cleaned := []Statement{}
+	for _, stmt := range stmts {
+		switch stmt := stmt.(type) {
+		case *CallStatement:
+			if _, ok := p.Function(stmt.Name); ok {
+				cleaned = append(cleaned, stmt)
+			}
+		case *SpawnStatement:
+			if _, ok := p.Function(stmt.Name); ok {
+				cleaned = append(cleaned, stmt)
+			}
+		case *IfStatement:
+			stmt.Then = p.removeNonFuncCall(stmt.Then)
+			stmt.Else = p.removeNonFuncCall(stmt.Else)
+			cleaned = append(cleaned, stmt)
+		default:
+			cleaned = append(cleaned, stmt)
+		}
+	}
+	return cleaned
 }
 
 func (p *Program) String() string {
@@ -254,16 +280,23 @@ func (f *Function) AddStmts(stmts ...Statement) {
 		}
 	}
 	if !f.HasComm {
-	SET_HASCOMM:
-		for _, s := range stmts {
-			switch s.(type) {
-			case *SendStatement, *RecvStatement, *CloseStatement, *SelectStatement, *NewChanStatement:
-				f.HasComm = true
-				break SET_HASCOMM
-			}
+		if hasComm(stmts) {
+			f.HasComm = true
 		}
 	}
 	f.Stmts = append(f.Stmts, stmts...)
+}
+
+func hasComm(stmts []Statement) bool {
+	for _, s := range stmts {
+		switch s := s.(type) {
+		case *SendStatement, *RecvStatement, *CloseStatement, *SelectStatement, *NewChanStatement:
+			return true
+		case *IfStatement:
+			return hasComm(s.Then) || hasComm(s.Else)
+		}
+	}
+	return false
 }
 
 // IsEmpty returns true if the Function body is empty.
