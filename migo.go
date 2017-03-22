@@ -431,6 +431,29 @@ func (s *IfStatement) String() string {
 	return buf.String()
 }
 
+// IfForStatement is a conditional statement introduced by a for-loop.
+//
+// IfForStatements always have both Then and Else.
+type IfForStatement struct {
+	ForCond string // Condition of the loop
+	Then    []Statement
+	Else    []Statement
+}
+
+func (s *IfForStatement) String() string {
+	var buf bytes.Buffer
+	buf.WriteString(fmt.Sprintf("ifFor (%s) ", s.ForCond))
+	for _, t := range s.Then {
+		buf.WriteString(fmt.Sprintf("%s; ", t.String()))
+	}
+	buf.WriteString("else ")
+	for _, f := range s.Else {
+		buf.WriteString(fmt.Sprintf("%s; ", f.String()))
+	}
+	buf.WriteString("endif")
+	return buf.String()
+}
+
 // SelectStatement is non-deterministic choice
 type SelectStatement struct {
 	Cases [][]Statement
