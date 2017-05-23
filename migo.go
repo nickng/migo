@@ -294,6 +294,8 @@ func hasComm(stmts []Statement) bool {
 			return true
 		case *IfStatement:
 			return hasComm(s.Then) || hasComm(s.Else)
+		case *IfForStatement:
+			return hasComm(s.Then) || hasComm(s.Else)
 		}
 	}
 	return false
