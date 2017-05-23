@@ -71,7 +71,7 @@ func (p *Program) findEmptyFunc(f *Function, known map[string]bool) {
 		case *CallStatement:
 			if child, ok := p.Function(stmt.Name); ok {
 				if hasComm, ok := known[child.Name]; ok {
-					f.HasComm = hasComm
+					f.HasComm = f.HasComm || hasComm
 				} else {
 					p.findEmptyFunc(child, known)
 					f.HasComm = f.HasComm || child.HasComm
@@ -81,7 +81,7 @@ func (p *Program) findEmptyFunc(f *Function, known map[string]bool) {
 		case *SpawnStatement:
 			if child, ok := p.Function(stmt.Name); ok {
 				if hasComm, ok := known[child.Name]; ok {
-					f.HasComm = hasComm
+					f.HasComm = f.HasComm || hasComm
 				} else {
 					p.findEmptyFunc(child, known)
 					f.HasComm = f.HasComm || child.HasComm
