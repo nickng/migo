@@ -442,7 +442,7 @@ type IfForStatement struct {
 
 func (s *IfForStatement) String() string {
 	var buf bytes.Buffer
-	buf.WriteString(fmt.Sprintf("ifFor (%s) ", s.ForCond))
+	buf.WriteString(fmt.Sprintf("ifFor (int %s) then ", s.ForCond))
 	for _, t := range s.Then {
 		buf.WriteString(fmt.Sprintf("%s; ", t.String()))
 	}
