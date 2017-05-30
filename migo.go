@@ -296,6 +296,10 @@ func hasComm(stmts []Statement) bool {
 			return hasComm(s.Then) || hasComm(s.Else)
 		case *IfForStatement:
 			return hasComm(s.Then) || hasComm(s.Else)
+		case *CallStatement:
+			return len(s.Params) > 0
+		case *SpawnStatement:
+			return len(s.Params) > 0
 		}
 	}
 	return false
@@ -317,6 +321,9 @@ func (f *Function) String() string {
 	var buf bytes.Buffer
 	buf.WriteString(fmt.Sprintf("def %s(%s):\n",
 		f.SimpleName(), CalleeParameterString(f.Params)))
+	if len(f.Stmts) == 0 {
+		f.AddStmts(&TauStatement{})
+	}
 	for _, stmt := range f.Stmts {
 		buf.WriteString(fmt.Sprintf("    %s;\n", stmt))
 	}
