@@ -472,9 +472,9 @@ func (s *SelectStatement) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("select")
 	for _, c := range s.Cases {
-		buf.WriteString("\n      case ")
+		buf.WriteString("\n      case")
 		for _, stmt := range c {
-			buf.WriteString(fmt.Sprintf("%s; ", stmt.String()))
+			buf.WriteString(fmt.Sprintf(" %s;", stmt.String()))
 		}
 	}
 	buf.WriteString("\n    endselect")
