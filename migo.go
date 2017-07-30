@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	nameFilter = strings.NewReplacer("(", "", ")", "", "*", "", "/", "_", "\"", "")
+	nameFilter = strings.NewReplacer("(", "", ")", "", "*", "", "/", "_", "\"", "", "-", "")
 )
 
 // NamedVar is a named variable.
