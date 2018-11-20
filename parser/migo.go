@@ -25,27 +25,27 @@ func newchanStmt(name, ch string, size int) migo.Statement {
 	}
 }
 
-func readStmt(name string) migo.Statement {
+func readStmt(name string) *migo.MemRead {
 	return &migo.MemRead{Name: name}
 }
 
-func writeStmt(name string) migo.Statement {
+func writeStmt(name string) *migo.MemWrite {
 	return &migo.MemWrite{Name: name}
 }
 
-func newmemStmt(name string) migo.Statement {
+func newmemStmt(name string) *migo.NewMem {
 	return &migo.NewMem{Name: name}
 }
 
-func closeStmt(ch string) migo.Statement {
+func closeStmt(ch string) *migo.CloseStatement {
 	return &migo.CloseStatement{Chan: ch}
 }
 
-func callStmt(fn string, params []*migo.Parameter) migo.Statement {
+func callStmt(fn string, params []*migo.Parameter) *migo.CallStatement {
 	return &migo.CallStatement{Name: fn, Params: params}
 }
 
-func spawnStmt(fn string, params []*migo.Parameter) migo.Statement {
+func spawnStmt(fn string, params []*migo.Parameter) *migo.SpawnStatement {
 	return &migo.SpawnStatement{Name: fn, Params: params}
 }
 
@@ -57,11 +57,11 @@ func plainParam(name string) *migo.Parameter {
 	return &migo.Parameter{Caller: &plainNamedVar{s: name}, Callee: &plainNamedVar{s: name}}
 }
 
-func ifStmt(iftrue, iffalse []migo.Statement) migo.Statement {
+func ifStmt(iftrue, iffalse []migo.Statement) *migo.IfStatement {
 	return &migo.IfStatement{Then: iftrue, Else: iffalse}
 }
 
-func selectStmt(cases [][]migo.Statement) migo.Statement {
+func selectStmt(cases [][]migo.Statement) *migo.SelectStatement {
 	return &migo.SelectStatement{Cases: cases}
 }
 
