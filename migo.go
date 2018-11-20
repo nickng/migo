@@ -497,7 +497,7 @@ func (s *SendStatement) String() string {
 	return fmt.Sprintf("send %s", s.Chan)
 }
 
-// RecvStatement receives from Chan
+// RecvStatement receives from Chan.
 type RecvStatement struct {
 	Chan string
 }
