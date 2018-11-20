@@ -5,9 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/nickng/migo"
-	"github.com/nickng/migo/mock_migo"
 	"github.com/nickng/migo/parser"
 )
 
@@ -30,6 +28,18 @@ func (e *ErrFuncExist) Error() string {
 	return fmt.Sprintf("Expects %s() removed from program, but it exists", e.f)
 }
 
+type named struct {
+	n string
+}
+
+func (n named) Name() string {
+	return n.n
+}
+
+func (n named) String() string {
+	return n.n
+}
+
 // Tests CleanUp with simple send/recv/work functions.
 //
 // def main():
@@ -49,37 +59,26 @@ func (e *ErrFuncExist) Error() string {
 // main, send, recv should remain after CleanUp
 //
 func TestCleanUp(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mainCh := mock_migo.NewMockNamedVar(ctrl)
-	mainCh.EXPECT().Name().AnyTimes().Return("ch")
-	mainCh.EXPECT().String().AnyTimes().Return("ch_instance")
-	sendCh := mock_migo.NewMockNamedVar(ctrl)
-	sendCh.EXPECT().Name().AnyTimes().Return("sch")
-	recvCh := mock_migo.NewMockNamedVar(ctrl)
-	recvCh.EXPECT().Name().AnyTimes().Return("rch")
-
 	p := migo.NewProgram()
 	mainFunc := migo.NewFunction("main.main")
 	mainFunc.AddStmts(
-		&migo.NewChanStatement{Name: mainCh, Chan: "ch", Size: 0},
+		&migo.NewChanStatement{Name: named{"ch"}, Chan: "ch_instance", Size: 0},
 		&migo.SpawnStatement{Name: "send", Params: []*migo.Parameter{
-			&migo.Parameter{Caller: mainCh}},
+			&migo.Parameter{Caller: named{"ch"}}},
 		},
 		&migo.SpawnStatement{Name: "recv", Params: []*migo.Parameter{
-			&migo.Parameter{Caller: mainCh}},
+			&migo.Parameter{Caller: named{"ch"}}},
 		},
 		&migo.RecvStatement{Chan: "ch"},
 		&migo.RecvStatement{Chan: "ch"},
 	)
 	sendFunc := migo.NewFunction("send")
-	sendFunc.AddParams(&migo.Parameter{Caller: mainCh, Callee: sendCh})
+	sendFunc.AddParams(&migo.Parameter{Caller: named{"ch"}, Callee: named{"sch"}})
 	sendFunc.AddStmts(
 		&migo.SendStatement{Chan: "sch"},
 	)
 	recvFunc := migo.NewFunction("recv")
-	sendFunc.AddParams(&migo.Parameter{Caller: mainCh, Callee: recvCh})
+	recvFunc.AddParams(&migo.Parameter{Caller: named{"ch"}, Callee: named{"rch"}})
 	recvFunc.AddStmts(
 		&migo.RecvStatement{Chan: "rch"},
 		&migo.SendStatement{Chan: "rch"},
@@ -151,32 +150,22 @@ func TestCleanUp(t *testing.T) {
 // main, work, work$2, work$3 should remain after CleanUp
 //
 func TestCleanUp2(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mainCh := mock_migo.NewMockNamedVar(ctrl)
-	mainCh.EXPECT().Name().AnyTimes().Return("ch")
-	mainCh.EXPECT().String().AnyTimes().Return("ch_instance")
-	xCh := mock_migo.NewMockNamedVar(ctrl)
-	xCh.EXPECT().Name().AnyTimes().Return("ch")
-	xCh.EXPECT().String().AnyTimes().Return("ch_instance")
-
 	p := migo.NewProgram()
 	mainFunc := migo.NewFunction("main.main")
 	mainFunc.AddStmts(
-		&migo.NewChanStatement{Name: mainCh, Chan: "ch", Size: 1},
+		&migo.NewChanStatement{Name: named{"ch"}, Chan: "ch_instance", Size: 1},
 		&migo.CallStatement{Name: "work", Params: []*migo.Parameter{
-			&migo.Parameter{Caller: mainCh, Callee: xCh}},
+			&migo.Parameter{Caller: named{"ch"}, Callee: named{"ch"}}},
 		},
 	)
 	workFunc := migo.NewFunction("work")
 	workFunc.AddStmts(
 		&migo.CallStatement{Name: "workwork"},
 		&migo.SpawnStatement{Name: "work$1", Params: []*migo.Parameter{
-			&migo.Parameter{Caller: mainCh, Callee: xCh}},
+			&migo.Parameter{Caller: named{"ch"}, Callee: named{"ch"}}},
 		},
 		&migo.SpawnStatement{Name: "work$2", Params: []*migo.Parameter{
-			&migo.Parameter{Caller: mainCh, Callee: xCh}},
+			&migo.Parameter{Caller: named{"ch"}, Callee: named{"ch"}}},
 		},
 	)
 	workworkFunc := migo.NewFunction("workwork")
@@ -185,19 +174,19 @@ func TestCleanUp2(t *testing.T) {
 	)
 	workworkworkFunc := migo.NewFunction("workworkwork")
 	workClosure := migo.NewFunction("work$1")
-	workClosure.AddParams(&migo.Parameter{Caller: mainCh, Callee: xCh})
+	workClosure.AddParams(&migo.Parameter{Caller: named{"ch"}, Callee: named{"ch"}})
 	workClosure2 := migo.NewFunction("work$2")
-	workClosure2.AddParams(&migo.Parameter{Caller: mainCh, Callee: xCh})
+	workClosure2.AddParams(&migo.Parameter{Caller: named{"ch"}, Callee: named{"ch"}})
 	workClosure2.AddStmts(
 		&migo.CallStatement{Name: "work$3", Params: []*migo.Parameter{
-			&migo.Parameter{Caller: mainCh, Callee: xCh}},
+			&migo.Parameter{Caller: named{"ch"}, Callee: named{"ch"}}},
 		},
 	)
 	workClosure3 := migo.NewFunction("work$3")
-	workClosure3.AddParams(&migo.Parameter{Caller: mainCh, Callee: xCh})
+	workClosure3.AddParams(&migo.Parameter{Caller: named{"ch"}, Callee: named{"ch"}})
 	workClosure3.AddStmts(
-		&migo.SendStatement{Chan: xCh.Name()},
-		&migo.RecvStatement{Chan: xCh.Name()},
+		&migo.SendStatement{Chan: "ch"},
+		&migo.RecvStatement{Chan: "ch"},
 	)
 	p.AddFunction(mainFunc)
 	p.AddFunction(workFunc)
@@ -262,8 +251,8 @@ def main.wait#1(x):
     recv x;
     call main.wait#1(x);`
 	expect := `def main.main():
-    let t0 = newchan t0, 0;
-    let t1 = newchan t1, 0;
+    let t0 = newchan main.main.t0_0_0, 0;
+    let t1 = newchan main.main.t1_0_0, 0;
     call main.xx(t0, t1);
     spawn main.wait(t0);
     spawn main.wait(t1);

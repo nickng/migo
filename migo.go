@@ -178,8 +178,6 @@ func (p *Program) String() string {
 	return buf.String()
 }
 
-//go:generate mockgen -source=migo.go -destination=mock_migo/namedvar.go NamedVar
-
 // Parameter is a translation from caller environment to callee.
 type Parameter struct {
 	Caller NamedVar
