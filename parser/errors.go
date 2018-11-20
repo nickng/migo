@@ -1,4 +1,4 @@
-package migo
+package parser
 
 import "fmt"
 

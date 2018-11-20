@@ -1,4 +1,4 @@
-package migo
+package migo_test
 
 import (
 	"fmt"
@@ -6,7 +6,9 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/nickng/migo"
 	"github.com/nickng/migo/mock_migo"
+	"github.com/nickng/migo/parser"
 )
 
 // ErrFuncNotExists is Error if function does not exist in program which is
@@ -58,31 +60,31 @@ func TestCleanUp(t *testing.T) {
 	recvCh := mock_migo.NewMockNamedVar(ctrl)
 	recvCh.EXPECT().Name().AnyTimes().Return("rch")
 
-	p := NewProgram()
-	mainFunc := NewFunction("main.main")
+	p := migo.NewProgram()
+	mainFunc := migo.NewFunction("main.main")
 	mainFunc.AddStmts(
-		&NewChanStatement{Name: mainCh, Chan: "ch", Size: 0},
-		&SpawnStatement{Name: "send", Params: []*Parameter{
-			&Parameter{Caller: mainCh}},
+		&migo.NewChanStatement{Name: mainCh, Chan: "ch", Size: 0},
+		&migo.SpawnStatement{Name: "send", Params: []*migo.Parameter{
+			&migo.Parameter{Caller: mainCh}},
 		},
-		&SpawnStatement{Name: "recv", Params: []*Parameter{
-			&Parameter{Caller: mainCh}},
+		&migo.SpawnStatement{Name: "recv", Params: []*migo.Parameter{
+			&migo.Parameter{Caller: mainCh}},
 		},
-		&RecvStatement{Chan: "ch"},
-		&RecvStatement{Chan: "ch"},
+		&migo.RecvStatement{Chan: "ch"},
+		&migo.RecvStatement{Chan: "ch"},
 	)
-	sendFunc := NewFunction("send")
-	sendFunc.AddParams(&Parameter{Caller: mainCh, Callee: sendCh})
+	sendFunc := migo.NewFunction("send")
+	sendFunc.AddParams(&migo.Parameter{Caller: mainCh, Callee: sendCh})
 	sendFunc.AddStmts(
-		&SendStatement{Chan: "sch"},
+		&migo.SendStatement{Chan: "sch"},
 	)
-	recvFunc := NewFunction("recv")
-	sendFunc.AddParams(&Parameter{Caller: mainCh, Callee: recvCh})
+	recvFunc := migo.NewFunction("recv")
+	sendFunc.AddParams(&migo.Parameter{Caller: mainCh, Callee: recvCh})
 	recvFunc.AddStmts(
-		&RecvStatement{Chan: "rch"},
-		&SendStatement{Chan: "rch"},
+		&migo.RecvStatement{Chan: "rch"},
+		&migo.SendStatement{Chan: "rch"},
 	)
-	workFunc := NewFunction("work")
+	workFunc := migo.NewFunction("work")
 	p.AddFunction(mainFunc)
 	p.AddFunction(sendFunc)
 	p.AddFunction(recvFunc)
@@ -91,13 +93,13 @@ func TestCleanUp(t *testing.T) {
 	if len(p.Funcs) != 4 {
 		t.Errorf("Expects 4 functions in program, but got %d", len(p.Funcs))
 	}
-	for _, nonempty := range []*Function{mainFunc, sendFunc, recvFunc} {
+	for _, nonempty := range []*migo.Function{mainFunc, sendFunc, recvFunc} {
 		if nonempty.IsEmpty() {
 			t.Errorf("Expects %s() to be non-empty, but got %t",
 				nonempty.Name, nonempty.IsEmpty())
 		}
 	}
-	for _, empty := range []*Function{workFunc} {
+	for _, empty := range []*migo.Function{workFunc} {
 		if !empty.IsEmpty() {
 			t.Errorf("Expects %s() to be empty, but got %t",
 				empty.Name, empty.IsEmpty())
@@ -159,43 +161,43 @@ func TestCleanUp2(t *testing.T) {
 	xCh.EXPECT().Name().AnyTimes().Return("ch")
 	xCh.EXPECT().String().AnyTimes().Return("ch_instance")
 
-	p := NewProgram()
-	mainFunc := NewFunction("main.main")
+	p := migo.NewProgram()
+	mainFunc := migo.NewFunction("main.main")
 	mainFunc.AddStmts(
-		&NewChanStatement{Name: mainCh, Chan: "ch", Size: 1},
-		&CallStatement{Name: "work", Params: []*Parameter{
-			&Parameter{Caller: mainCh, Callee: xCh}},
+		&migo.NewChanStatement{Name: mainCh, Chan: "ch", Size: 1},
+		&migo.CallStatement{Name: "work", Params: []*migo.Parameter{
+			&migo.Parameter{Caller: mainCh, Callee: xCh}},
 		},
 	)
-	workFunc := NewFunction("work")
+	workFunc := migo.NewFunction("work")
 	workFunc.AddStmts(
-		&CallStatement{Name: "workwork"},
-		&SpawnStatement{Name: "work$1", Params: []*Parameter{
-			&Parameter{Caller: mainCh, Callee: xCh}},
+		&migo.CallStatement{Name: "workwork"},
+		&migo.SpawnStatement{Name: "work$1", Params: []*migo.Parameter{
+			&migo.Parameter{Caller: mainCh, Callee: xCh}},
 		},
-		&SpawnStatement{Name: "work$2", Params: []*Parameter{
-			&Parameter{Caller: mainCh, Callee: xCh}},
+		&migo.SpawnStatement{Name: "work$2", Params: []*migo.Parameter{
+			&migo.Parameter{Caller: mainCh, Callee: xCh}},
 		},
 	)
-	workworkFunc := NewFunction("workwork")
+	workworkFunc := migo.NewFunction("workwork")
 	workworkFunc.AddStmts(
-		&CallStatement{Name: "workworkwork"},
+		&migo.CallStatement{Name: "workworkwork"},
 	)
-	workworkworkFunc := NewFunction("workworkwork")
-	workClosure := NewFunction("work$1")
-	workClosure.AddParams(&Parameter{Caller: mainCh, Callee: xCh})
-	workClosure2 := NewFunction("work$2")
-	workClosure2.AddParams(&Parameter{Caller: mainCh, Callee: xCh})
+	workworkworkFunc := migo.NewFunction("workworkwork")
+	workClosure := migo.NewFunction("work$1")
+	workClosure.AddParams(&migo.Parameter{Caller: mainCh, Callee: xCh})
+	workClosure2 := migo.NewFunction("work$2")
+	workClosure2.AddParams(&migo.Parameter{Caller: mainCh, Callee: xCh})
 	workClosure2.AddStmts(
-		&CallStatement{Name: "work$3", Params: []*Parameter{
-			&Parameter{Caller: mainCh, Callee: xCh}},
+		&migo.CallStatement{Name: "work$3", Params: []*migo.Parameter{
+			&migo.Parameter{Caller: mainCh, Callee: xCh}},
 		},
 	)
-	workClosure3 := NewFunction("work$3")
-	workClosure3.AddParams(&Parameter{Caller: mainCh, Callee: xCh})
+	workClosure3 := migo.NewFunction("work$3")
+	workClosure3.AddParams(&migo.Parameter{Caller: mainCh, Callee: xCh})
 	workClosure3.AddStmts(
-		&SendStatement{Chan: xCh.Name()},
-		&RecvStatement{Chan: xCh.Name()},
+		&migo.SendStatement{Chan: xCh.Name()},
+		&migo.RecvStatement{Chan: xCh.Name()},
 	)
 	p.AddFunction(mainFunc)
 	p.AddFunction(workFunc)
@@ -208,13 +210,13 @@ func TestCleanUp2(t *testing.T) {
 	if len(p.Funcs) != 7 {
 		t.Errorf("Expects 7 functions in program, but got %d", len(p.Funcs))
 	}
-	for _, nonEmpty := range []*Function{mainFunc, workFunc, workworkFunc, workClosure2, workClosure3} {
+	for _, nonEmpty := range []*migo.Function{mainFunc, workFunc, workworkFunc, workClosure2, workClosure3} {
 		if nonEmpty.IsEmpty() {
 			t.Errorf("Expects %s() to be non-empty, but got %t",
 				nonEmpty.Name, nonEmpty.IsEmpty())
 		}
 	}
-	for _, empty := range []*Function{workworkworkFunc, workClosure} {
+	for _, empty := range []*migo.Function{workworkworkFunc, workClosure} {
 		if !empty.IsEmpty() {
 			t.Errorf("Expects %s() to empty, but got %t",
 				empty.Name, empty.IsEmpty())
@@ -273,7 +275,7 @@ def main.wait#1(x):
     recv x;
     call main.wait#1(x);`
 	r := strings.NewReader(s)
-	parsed, err := Parse(r)
+	parsed, err := parser.Parse(r)
 	parsed.CleanUp()
 	if err != nil {
 		t.Error(err)
@@ -288,7 +290,7 @@ def main.wait#1(x):
 func TestSimpleName(t *testing.T) {
 	fullGoName := "(github.com/nickng/migo).String#1"
 	simpleName := "github.com_nickng_migo.String#1"
-	s := &CallStatement{Name: fullGoName, Params: []*Parameter{}}
+	s := &migo.CallStatement{Name: fullGoName, Params: []*migo.Parameter{}}
 	if s.SimpleName() != simpleName {
 		t.Errorf("SimplifyName of %s should be %s but got %s",
 			fullGoName, simpleName, s.SimpleName())

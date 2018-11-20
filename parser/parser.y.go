@@ -1,79 +1,80 @@
 //line migo.y:2
-package migo
+package parser
 
 import __yyfmt__ "fmt"
 
 //line migo.y:2
 import (
+	"github.com/nickng/migo"
 	"io"
 )
 
-var prog *Program
+var prog *migo.Program
 
-//line migo.y:11
+//line migo.y:12
 type migoSymType struct {
 	yys    int
 	str    string
 	num    int
-	prog   *Program
-	fun    *Function
-	stmt   Statement
-	stmts  []Statement
-	params []*Parameter
-	cases  [][]Statement
+	prog   *migo.Program
+	fun    *migo.Function
+	stmt   migo.Statement
+	stmts  []migo.Statement
+	params []*migo.Parameter
+	cases  [][]migo.Statement
 }
 
-const COMMA = 57346
-const DEF = 57347
-const EQ = 57348
-const LPAREN = 57349
-const RPAREN = 57350
-const COLON = 57351
-const SEMICOLON = 57352
-const CALL = 57353
-const SPAWN = 57354
-const CASE = 57355
-const CLOSE = 57356
-const ELSE = 57357
-const ENDIF = 57358
-const ENDSELECT = 57359
-const IF = 57360
-const LET = 57361
-const NEWCHAN = 57362
-const SELECT = 57363
-const SEND = 57364
-const RECV = 57365
-const TAU = 57366
-const IDENT = 57367
-const DIGITS = 57368
+const tCOMMA = 57346
+const tDEF = 57347
+const tEQ = 57348
+const tLPAREN = 57349
+const tRPAREN = 57350
+const tCOLON = 57351
+const tSEMICOLON = 57352
+const tCALL = 57353
+const tSPAWN = 57354
+const tCASE = 57355
+const tCLOSE = 57356
+const tELSE = 57357
+const tENDIF = 57358
+const tENDSELECT = 57359
+const tIF = 57360
+const tLET = 57361
+const tNEWCHAN = 57362
+const tSELECT = 57363
+const tSEND = 57364
+const tRECV = 57365
+const tTAU = 57366
+const tIDENT = 57367
+const tDIGITS = 57368
 
 var migoToknames = [...]string{
 	"$end",
 	"error",
 	"$unk",
-	"COMMA",
-	"DEF",
-	"EQ",
-	"LPAREN",
-	"RPAREN",
-	"COLON",
-	"SEMICOLON",
-	"CALL",
-	"SPAWN",
-	"CASE",
-	"CLOSE",
-	"ELSE",
-	"ENDIF",
-	"ENDSELECT",
-	"IF",
-	"LET",
-	"NEWCHAN",
-	"SELECT",
-	"SEND",
-	"RECV",
-	"TAU",
-	"IDENT",
-	"DIGITS",
+	"tCOMMA",
+	"tDEF",
+	"tEQ",
+	"tLPAREN",
+	"tRPAREN",
+	"tCOLON",
+	"tSEMICOLON",
+	"tCALL",
+	"tSPAWN",
+	"tCASE",
+	"tCLOSE",
+	"tELSE",
+	"tENDIF",
+	"tENDSELECT",
+	"tIF",
+	"tLET",
+	"tNEWCHAN",
+	"tSELECT",
+	"tSEND",
+	"tRECV",
+	"tTAU",
+	"tIDENT",
+	"tDIGITS",
 }
 var migoStatenames = [...]string{}
 
@@ -81,9 +82,9 @@ const migoEofCode = 1
 const migoErrCode = 2
 const migoInitialStackSize = 16
 
-//line migo.y:74
+//line migo.y:75
 // Parse is the entry point to the migo type parser
-func Parse(r io.Reader) (*Program, error) {
+func Parse(r io.Reader) (*migo.Program, error) {
 	l := NewLexer(r)
 	migoParse(l)
 	select {
@@ -101,11 +102,7 @@ var migoExca = [...]int{
 	-2, 0,
 }
 
-const migoNprod = 23
 const migoPrivate = 57344
-
-var migoTokenNames []string
-var migoStates []string
 
 const migoLast = 83
 
@@ -520,139 +517,139 @@ migodefault:
 
 	case 1:
 		migoDollar = migoS[migopt-1 : migopt+1]
-		//line migo.y:36
+		//line migo.y:37
 		{
-			prog = NewProgram()
+			prog = migo.NewProgram()
 			migoVAL.prog = prog
 			prog.AddFunction(migoDollar[1].fun)
 		}
 	case 2:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:37
+		//line migo.y:38
 		{
 			migoDollar[1].prog.AddFunction(migoDollar[2].fun)
 		}
 	case 3:
 		migoDollar = migoS[migopt-7 : migopt+1]
-		//line migo.y:40
+		//line migo.y:41
 		{
-			migoVAL.fun = NewFunction(migoDollar[2].str)
+			migoVAL.fun = migo.NewFunction(migoDollar[2].str)
 			migoVAL.fun.AddParams(migoDollar[4].params...)
 			migoVAL.fun.AddStmts(migoDollar[7].stmts...)
 		}
 	case 4:
 		migoDollar = migoS[migopt-0 : migopt+1]
-		//line migo.y:43
+		//line migo.y:44
 		{
-			migoVAL.params = []*Parameter{}
+			migoVAL.params = params()
 		}
 	case 5:
 		migoDollar = migoS[migopt-1 : migopt+1]
-		//line migo.y:44
+		//line migo.y:45
 		{
-			migoVAL.params = []*Parameter{&Parameter{Caller: &plainNamedVar{s: migoDollar[1].str}, Callee: &plainNamedVar{s: migoDollar[1].str}}}
+			migoVAL.params = params(plainParam(migoDollar[1].str))
 		}
 	case 6:
 		migoDollar = migoS[migopt-3 : migopt+1]
-		//line migo.y:45
+		//line migo.y:46
 		{
-			migoVAL.params = append(migoDollar[1].params, &Parameter{Caller: &plainNamedVar{s: migoDollar[3].str}, Callee: &plainNamedVar{s: migoDollar[3].str}})
+			migoVAL.params = append(migoDollar[1].params, plainParam(migoDollar[3].str))
 		}
 	case 7:
 		migoDollar = migoS[migopt-1 : migopt+1]
-		//line migo.y:48
+		//line migo.y:49
 		{
-			migoVAL.stmts = []Statement{migoDollar[1].stmt}
+			migoVAL.stmts = stmts(migoDollar[1].stmt)
 		}
 	case 8:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:49
+		//line migo.y:50
 		{
 			migoVAL.stmts = append(migoDollar[1].stmts, migoDollar[2].stmt)
 		}
 	case 9:
 		migoDollar = migoS[migopt-0 : migopt+1]
-		//line migo.y:52
+		//line migo.y:53
 		{
-			migoVAL.stmts = []Statement{}
+			migoVAL.stmts = stmts()
 		}
 	case 10:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:53
+		//line migo.y:54
 		{
 			migoVAL.stmts = append(migoDollar[1].stmts, migoDollar[2].stmt)
 		}
 	case 11:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:56
+		//line migo.y:57
 		{
-			migoVAL.stmt = &SendStatement{Chan: migoDollar[2].str}
+			migoVAL.stmt = sendStmt(migoDollar[2].str)
 		}
 	case 12:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:57
+		//line migo.y:58
 		{
-			migoVAL.stmt = &RecvStatement{Chan: migoDollar[2].str}
+			migoVAL.stmt = recvStmt(migoDollar[2].str)
 		}
 	case 13:
 		migoDollar = migoS[migopt-1 : migopt+1]
-		//line migo.y:58
+		//line migo.y:59
 		{
-			migoVAL.stmt = &TauStatement{}
+			migoVAL.stmt = tauStmt()
 		}
 	case 14:
 		migoDollar = migoS[migopt-8 : migopt+1]
-		//line migo.y:61
+		//line migo.y:62
 		{
-			migoVAL.stmt = &NewChanStatement{Name: &plainNamedVar{s: migoDollar[2].str}, Chan: migoDollar[2].str, Size: int64(migoDollar[7].num)}
+			migoVAL.stmt = newchanStmt(migoDollar[2].str, migoDollar[5].str, migoDollar[7].num)
 		}
 	case 15:
 		migoDollar = migoS[migopt-2 : migopt+1]
-		//line migo.y:62
+		//line migo.y:63
 		{
 			migoVAL.stmt = migoDollar[1].stmt
 		}
 	case 16:
 		migoDollar = migoS[migopt-3 : migopt+1]
-		//line migo.y:63
+		//line migo.y:64
 		{
-			migoVAL.stmt = &CloseStatement{Chan: migoDollar[2].str}
+			migoVAL.stmt = closeStmt(migoDollar[2].str)
 		}
 	case 17:
 		migoDollar = migoS[migopt-6 : migopt+1]
-		//line migo.y:64
+		//line migo.y:65
 		{
-			migoVAL.stmt = &CallStatement{Name: migoDollar[2].str, Params: migoDollar[4].params}
+			migoVAL.stmt = callStmt(migoDollar[2].str, migoDollar[4].params)
 		}
 	case 18:
 		migoDollar = migoS[migopt-6 : migopt+1]
-		//line migo.y:65
+		//line migo.y:66
 		{
-			migoVAL.stmt = &SpawnStatement{Name: migoDollar[2].str, Params: migoDollar[4].params}
+			migoVAL.stmt = spawnStmt(migoDollar[2].str, migoDollar[4].params)
 		}
 	case 19:
 		migoDollar = migoS[migopt-6 : migopt+1]
-		//line migo.y:66
+		//line migo.y:67
 		{
-			migoVAL.stmt = &IfStatement{Then: migoDollar[2].stmts, Else: migoDollar[4].stmts}
+			migoVAL.stmt = ifStmt(migoDollar[2].stmts, migoDollar[4].stmts)
 		}
 	case 20:
 		migoDollar = migoS[migopt-4 : migopt+1]
-		//line migo.y:67
+		//line migo.y:68
 		{
-			migoVAL.stmt = &SelectStatement{Cases: migoDollar[2].cases}
+			migoVAL.stmt = selectStmt(migoDollar[2].cases)
 		}
 	case 21:
 		migoDollar = migoS[migopt-0 : migopt+1]
-		//line migo.y:70
+		//line migo.y:71
 		{
-			migoVAL.cases = [][]Statement{}
+			migoVAL.cases = cases()
 		}
 	case 22:
 		migoDollar = migoS[migopt-5 : migopt+1]
-		//line migo.y:71
+		//line migo.y:72
 		{
-			migoVAL.cases = append(migoDollar[1].cases, append([]Statement{migoDollar[3].stmt}, migoDollar[5].stmts...))
+			migoVAL.cases = append(migoDollar[1].cases, append(stmts(migoDollar[3].stmt), migoDollar[5].stmts...))
 		}
 	}
 	goto migostack /* stack new state and value */

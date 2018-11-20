@@ -1,4 +1,4 @@
-package migo
+package parser
 
 // Plain NamedVar for use with parser.
 

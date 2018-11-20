@@ -1,6 +1,6 @@
-package migo
+package parser
 
-//go:generate go tool yacc -p migo -o parser.y.go migo.y
+//go:generate goyacc -p migo -o parser.y.go migo.y
 
 import "io"
 

@@ -1,4 +1,4 @@
-package migo
+package parser
 
 import "fmt"
 
@@ -41,9 +41,9 @@ type IdentToken struct {
 	start, end TokenPos
 }
 
-// Tok returns IDENT.
+// Tok returns tIDENT.
 func (*IdentToken) Tok() Tok {
-	return IDENT
+	return tIDENT
 }
 
 // StartPos returns starting position of token.
@@ -62,9 +62,9 @@ type DigitsToken struct {
 	start, end TokenPos
 }
 
-// Tok returns DIGITS.
+// Tok returns tDIGITS.
 func (t *DigitsToken) Tok() Tok {
-	return DIGITS
+	return tDIGITS
 }
 
 // StartPos returns starting position of token.
@@ -78,8 +78,8 @@ func (t *DigitsToken) EndPos() TokenPos {
 }
 
 const (
-	// ILLEGAL is a special token for errors.
-	ILLEGAL Tok = iota
+	// tILLEGAL is a special token for errors.
+	tILLEGAL Tok = iota
 )
 
 var eof = rune(0)

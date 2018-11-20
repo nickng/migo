@@ -1,4 +1,4 @@
-package migo
+package parser
 
 import (
 	"bufio"
@@ -67,17 +67,17 @@ func (s *Scanner) Scan() Token {
 	case eof:
 		return &ConstToken{t: 0, start: startPos, end: endPos}
 	case ':':
-		return &ConstToken{t: COLON, start: startPos, end: endPos}
+		return &ConstToken{t: tCOLON, start: startPos, end: endPos}
 	case ';':
-		return &ConstToken{t: SEMICOLON, start: startPos, end: endPos}
+		return &ConstToken{t: tSEMICOLON, start: startPos, end: endPos}
 	case ',':
-		return &ConstToken{t: COMMA, start: startPos, end: endPos}
+		return &ConstToken{t: tCOMMA, start: startPos, end: endPos}
 	case '(':
-		return &ConstToken{t: LPAREN, start: startPos, end: endPos}
+		return &ConstToken{t: tLPAREN, start: startPos, end: endPos}
 	case ')':
-		return &ConstToken{t: RPAREN, start: startPos, end: endPos}
+		return &ConstToken{t: tRPAREN, start: startPos, end: endPos}
 	case '=':
-		return &ConstToken{t: EQ, start: startPos, end: endPos}
+		return &ConstToken{t: tEQ, start: startPos, end: endPos}
 	case '-':
 		if ch2 := s.read(); ch2 == '-' {
 			s.unread()
@@ -86,7 +86,7 @@ func (s *Scanner) Scan() Token {
 			return s.Scan()
 		}
 	}
-	return &ConstToken{t: ILLEGAL, start: startPos, end: endPos}
+	return &ConstToken{t: tILLEGAL, start: startPos, end: endPos}
 }
 
 func (s *Scanner) scanIdent() Token {
@@ -111,35 +111,35 @@ func (s *Scanner) scanIdent() Token {
 
 	switch buf.String() {
 	case "def":
-		return &ConstToken{t: DEF, start: startPos, end: endPos}
+		return &ConstToken{t: tDEF, start: startPos, end: endPos}
 	case "call":
-		return &ConstToken{t: CALL, start: startPos, end: endPos}
+		return &ConstToken{t: tCALL, start: startPos, end: endPos}
 	case "spawn":
-		return &ConstToken{t: SPAWN, start: startPos, end: endPos}
+		return &ConstToken{t: tSPAWN, start: startPos, end: endPos}
 	case "case":
-		return &ConstToken{t: CASE, start: startPos, end: endPos}
+		return &ConstToken{t: tCASE, start: startPos, end: endPos}
 	case "close":
-		return &ConstToken{t: CLOSE, start: startPos, end: endPos}
+		return &ConstToken{t: tCLOSE, start: startPos, end: endPos}
 	case "else":
-		return &ConstToken{t: ELSE, start: startPos, end: endPos}
+		return &ConstToken{t: tELSE, start: startPos, end: endPos}
 	case "endif":
-		return &ConstToken{t: ENDIF, start: startPos, end: endPos}
+		return &ConstToken{t: tENDIF, start: startPos, end: endPos}
 	case "endselect":
-		return &ConstToken{t: ENDSELECT, start: startPos, end: endPos}
+		return &ConstToken{t: tENDSELECT, start: startPos, end: endPos}
 	case "if":
-		return &ConstToken{t: IF, start: startPos, end: endPos}
+		return &ConstToken{t: tIF, start: startPos, end: endPos}
 	case "let":
-		return &ConstToken{t: LET, start: startPos, end: endPos}
+		return &ConstToken{t: tLET, start: startPos, end: endPos}
 	case "newchan":
-		return &ConstToken{t: NEWCHAN, start: startPos, end: endPos}
+		return &ConstToken{t: tNEWCHAN, start: startPos, end: endPos}
 	case "select":
-		return &ConstToken{t: SELECT, start: startPos, end: endPos}
+		return &ConstToken{t: tSELECT, start: startPos, end: endPos}
 	case "send":
-		return &ConstToken{t: SEND, start: startPos, end: endPos}
+		return &ConstToken{t: tSEND, start: startPos, end: endPos}
 	case "recv":
-		return &ConstToken{t: RECV, start: startPos, end: endPos}
+		return &ConstToken{t: tRECV, start: startPos, end: endPos}
 	case "tau":
-		return &ConstToken{t: TAU, start: startPos, end: endPos}
+		return &ConstToken{t: tTAU, start: startPos, end: endPos}
 	}
 
 	if i, err := strconv.Atoi(buf.String()); err == nil {
