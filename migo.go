@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"go/token"
-	"sort"
 	"strings"
 )
 
@@ -161,9 +160,7 @@ func (p *Program) removeNonFuncCall(stmts []Statement) []Statement {
 		case *IfStatement:
 			stmt.Then = p.removeNonFuncCall(stmt.Then)
 			stmt.Else = p.removeNonFuncCall(stmt.Else)
-			if len(stmt.Then) != 0 || len(stmt.Else) != 0 {
-				cleaned = append(cleaned, stmt)
-			}
+			cleaned = append(cleaned, stmt)
 		default:
 			cleaned = append(cleaned, stmt)
 		}
@@ -172,17 +169,9 @@ func (p *Program) removeNonFuncCall(stmts []Statement) []Statement {
 }
 
 func (p *Program) String() string {
-	sort.Slice(p.Funcs, func(i, j int) bool {
-		return p.Funcs[i].SimpleName() < p.Funcs[j].SimpleName()
-	})
 	var buf bytes.Buffer
 	for _, f := range p.Funcs {
-		if !f.IsEmpty() && strings.HasPrefix(f.SimpleName(), "main.m") {
-			buf.WriteString(f.String())
-		}
-	}
-	for _, f := range p.Funcs {
-		if !f.IsEmpty() && !strings.HasPrefix(f.SimpleName(), "main.m") {
+		if !f.IsEmpty() {
 			buf.WriteString(f.String())
 		}
 	}
