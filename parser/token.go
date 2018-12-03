@@ -107,5 +107,5 @@ func isNum(ch rune) bool {
 }
 
 func isIdent(ch rune) bool {
-	return isAlphaNum(ch) || ch == '_' || ch == '.' || ch == '#' || ch == '/'
+	return isAlphaNum(ch) || ch == '_' || ch == '.' || ch == '#' || ch == '/' || ch == '$'
 }
