@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/nickng/migo"
+	"github.com/nickng/migo/internal/passes/deadcall"
+	"github.com/nickng/migo/internal/passes/taufunc"
 	"github.com/nickng/migo/parser"
 )
 
@@ -126,6 +128,45 @@ func TestCleanUp(t *testing.T) {
 			t.Error(&ErrFuncExist{f: removed})
 		}
 	}
+	s := `
+def main():
+  let ch = newchan ch_instance, 0;
+  spawn s(ch);
+  spawn r(ch);
+  spawn work();
+  recv ch;
+  recv ch;
+def s(sch):
+  send sch;
+def r(rch):
+  recv rch;
+  send rch;
+def work(): tau;
+	`
+	prog, err := parser.Parse(strings.NewReader(s))
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	if mainfn, found := prog.Function("main.main"); found {
+		taufunc.Find(prog, taufunc.RemoveExcept(mainfn))
+		deadcall.Remove(prog)
+		if len(prog.Funcs) != 3 {
+			t.Errorf("Expects 3 functions in program, but got %d", len(prog.Funcs))
+		}
+		// These should remain
+		for _, remain := range []string{"main.main", "send", "recv"} {
+			if _, ok := prog.Function(remain); !ok {
+				t.Error(&ErrFuncNotExist{f: remain})
+			}
+		}
+		// These should be removed
+		for _, removed := range []string{"work"} {
+			if _, ok := prog.Function(removed); ok {
+				t.Error(&ErrFuncExist{f: removed})
+			}
+		}
+	}
 }
 
 // Tests CleanUp with calls to empty functions.
@@ -233,6 +274,46 @@ func TestCleanUp2(t *testing.T) {
 			t.Error(&ErrFuncExist{f: removed})
 		}
 	}
+	s := `
+def main.main():
+	let ch = newchan ch_instance, 1;
+	call work(ch);
+def work(ch):
+	call workwork();
+	spawn work$1(ch);
+	call work$2(ch);
+def workwork():
+	call workworkwork();
+def workworkwork(): tau;
+def work$1(ch): tau;
+def work$2(ch):
+	call work$3(ch);
+def work$3(ch):
+	recv ch;
+	send ch;
+`
+	prog, err := parser.Parse(strings.NewReader(s))
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	taufunc.Find(prog, taufunc.Remove)
+	deadcall.Remove(prog)
+	if len(prog.Funcs) != 4 {
+		t.Errorf("Expects 4 functions in program, but got %d", len(prog.Funcs))
+	}
+	// These should remain
+	for _, remain := range []string{"main.main", "work", "work$2", "work$3"} {
+		if _, ok := prog.Function(remain); !ok {
+			t.Error(&ErrFuncNotExist{f: remain})
+		}
+	}
+	// These should be removed
+	for _, removed := range []string{"workwork", "workworkwork", "work$1"} {
+		if _, ok := prog.Function(removed); ok {
+			t.Error(&ErrFuncExist{f: removed})
+		}
+	}
 }
 
 // This tests CleanUp from an inconsistent state (main.xx#2 is not defined)
@@ -257,7 +338,7 @@ def main.wait#1(x):
     spawn main.wait(t0);
     spawn main.wait(t1);
 def main.xx(x, y):
-    if send x; spawn main.xx(y, x); else endif;
+    if send x; spawn main.xx(y, x); else tau; endif;
 def main.wait(x):
     call main.wait#1(x);
 def main.wait#1(x):
@@ -272,6 +353,19 @@ def main.wait#1(x):
 	if strings.TrimSpace(parsed.String()) != expect {
 		t.Errorf("Expects main.xx#2 calls to be removed\n--- expect ---\n%s\n--- got ---\n%s\n",
 			expect, parsed.String())
+	}
+	prog, err := parser.Parse(strings.NewReader(s))
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	if mainfn, found := prog.Function("main.main"); found {
+		taufunc.Find(prog, taufunc.RemoveExcept(mainfn))
+		deadcall.Remove(prog)
+		if strings.TrimSpace(prog.String()) != expect {
+			t.Errorf("Expects main.xx#2 calls to be removed\n--- expect ---\n%s\n--- got ---\n%s\n",
+				expect, prog.String())
+		}
 	}
 }
 
