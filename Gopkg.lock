@@ -1,7 +1,0 @@
-memo = "36b4fa691e6e6f65f5e41f879f919677646b04c190819a083d8bd9e83f37827c"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/golang/mock"
-  packages = ["gomock"]
-  revision = "bd3c8e81be01eef76d4b503f5e687d2d1354d2d9"
