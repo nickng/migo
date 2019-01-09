@@ -114,8 +114,11 @@ func (t *tauFuncFinder) isTau(n *ctrlflow.Node, stmts []migo.Statement) bool {
 		case *migo.CallStatement, *migo.SpawnStatement:
 			// skip for now
 
+		case *migo.NewMem, *migo.MemRead, *migo.MemWrite:
+			istainted = true
+
 		default:
-			log.Fatal(fmt.Errorf("statement kind not found: %T", stmt))
+			log.Fatal(fmt.Errorf("passes/taufunc: statement kind not found: %T", stmt))
 		}
 	}
 	return !istainted

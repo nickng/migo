@@ -191,6 +191,9 @@ func (b *builder) visitStmts(parent *migo.Function, stmts []migo.Statement) {
 				b.graph.addEdge(b.nodes[parent], b.nodes[fn])
 			}
 
+		case *migo.NewMem, *migo.MemRead, *migo.MemWrite:
+			// no-op
+
 		default:
 			log.Fatal(fmt.Errorf("ctrlflow: statement kind not found: %T", stmt))
 		}

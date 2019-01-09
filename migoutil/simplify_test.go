@@ -360,3 +360,119 @@ def main.wait#1(x):
 			expect, prog.String())
 	}
 }
+
+// Tests SimplifyProgram in the presence of mem ops.
+func TestSimplfyProgramMemOp(t *testing.T) {
+	p := migo.NewProgram()
+	mainFunc := migo.NewFunction("main.main")
+	mainFunc.AddStmts(
+		&migo.NewChanStatement{Name: named{"ch"}, Chan: "ch_instance", Size: 0},
+		&migo.NewMem{Name: "mem0"},
+		&migo.SpawnStatement{Name: "send", Params: []*migo.Parameter{
+			&migo.Parameter{Caller: named{"ch"}}},
+		},
+		&migo.SpawnStatement{Name: "recv", Params: []*migo.Parameter{
+			&migo.Parameter{Caller: named{"ch"}}},
+		},
+		&migo.RecvStatement{Chan: "ch"},
+		&migo.RecvStatement{Chan: "ch"},
+		&migo.MemWrite{Name: "mem0"},
+	)
+	sendFunc := migo.NewFunction("send")
+	sendFunc.AddParams(&migo.Parameter{Caller: named{"ch"}, Callee: named{"sch"}})
+	sendFunc.AddStmts(
+		&migo.SendStatement{Chan: "sch"},
+		&migo.MemWrite{Name: "mem0"},
+	)
+	recvFunc := migo.NewFunction("recv")
+	recvFunc.AddParams(&migo.Parameter{Caller: named{"ch"}, Callee: named{"rch"}})
+	recvFunc.AddStmts(
+		&migo.RecvStatement{Chan: "rch"},
+		&migo.SendStatement{Chan: "rch"},
+	)
+	workFunc := migo.NewFunction("work")
+	workFunc.AddStmts(
+		&migo.MemRead{Name: "mem0"},
+		&migo.MemWrite{Name: "mem0"},
+	)
+	emptyFunc := migo.NewFunction("empty")
+	p.AddFunction(mainFunc)
+	p.AddFunction(sendFunc)
+	p.AddFunction(recvFunc)
+	p.AddFunction(workFunc)
+	p.AddFunction(emptyFunc)
+
+	if len(p.Funcs) != 5 {
+		t.Errorf("Expects 5 functions in program, but got %d", len(p.Funcs))
+	}
+	for _, nonempty := range []*migo.Function{mainFunc, sendFunc, recvFunc, workFunc} {
+		if nonempty.IsEmpty() {
+			t.Errorf("Expects %s() to be non-empty, but got %t",
+				nonempty.Name, nonempty.IsEmpty())
+		}
+	}
+	for _, empty := range []*migo.Function{emptyFunc} {
+		if !empty.IsEmpty() {
+			t.Errorf("Expects %s() to be empty, but got %t",
+				empty.Name, empty.IsEmpty())
+		}
+	}
+	// These should exist
+	for _, exist := range []string{"main.main", "send", "recv", "work"} {
+		if _, ok := p.Function(exist); !ok {
+			t.Error(&ErrFuncNotExist{f: exist})
+		}
+	}
+	migoutil.SimplifyProgram(p)
+	if len(p.Funcs) != 4 {
+		t.Errorf("Expects 4 functions in program, but got %d", len(p.Funcs))
+	}
+	// These should remain
+	for _, remain := range []string{"main.main", "send", "recv", "work"} {
+		if _, ok := p.Function(remain); !ok {
+			t.Error(&ErrFuncNotExist{f: remain})
+		}
+	}
+	// These should be removed
+	for _, removed := range []string{"empty"} {
+		if _, ok := p.Function(removed); ok {
+			t.Error(&ErrFuncExist{f: removed})
+		}
+	}
+	s := `
+def main.main():
+  let ch = newchan ch_instance, 0;
+  spawn s(ch);
+  spawn r(ch);
+  spawn work();
+  recv ch;
+  recv ch;
+def s(sch):
+  send sch;
+def r(rch):
+  recv rch;
+  send rch;
+def work(): tau;
+	`
+	prog, err := parser.Parse(strings.NewReader(s))
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	migoutil.SimplifyProgram(prog)
+	if len(prog.Funcs) != 3 {
+		t.Errorf("Expects 3 functions in program, but got %d", len(prog.Funcs))
+	}
+	// These should remain
+	for _, remain := range []string{"main.main", "s", "r"} {
+		if _, ok := prog.Function(remain); !ok {
+			t.Error(&ErrFuncNotExist{f: remain})
+		}
+	}
+	// These should be removed
+	for _, removed := range []string{"work"} {
+		if _, ok := prog.Function(removed); ok {
+			t.Error(&ErrFuncExist{f: removed})
+		}
+	}
+}
