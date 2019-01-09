@@ -37,23 +37,3 @@ func ExampleProgram() {
 	// def G():
 	//     tau;
 }
-
-// This example demonstrates the usage of the CleanUp function to remove
-// unwanted empty functions.
-func ExampleProgram_CleanUp() {
-	p := migo.NewProgram()
-	f := migo.NewFunction("F")
-	SendXStmt := &migo.SendStatement{Chan: "x"}                              // send x
-	callGStmt := &migo.CallStatement{Name: "G", Params: []*migo.Parameter{}} // call G()
-	f.AddStmts(SendXStmt, callGStmt)                                         // F()
-	g := migo.NewFunction("G")
-	g.AddParams()                    // G()
-	g.AddStmts(&migo.TauStatement{}) // tau
-	p.AddFunction(f)                 // Note that calling G() will be removed.
-	p.AddFunction(g)                 // Note that G() is an empty function.
-	p.CleanUp()
-	fmt.Print(p.String())
-	// Output:
-	// def F():
-	//     send x;
-}
