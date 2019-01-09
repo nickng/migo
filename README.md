@@ -16,13 +16,6 @@ The package can be installed using `go get`:
 
     go get github.com/nickng/migo
 
-Some tests uses `golang/mock`, to (re)generate mock files, install `mockgen` and
-run `go generate`:
-
-    go get github.com/golang/mock/mockgen
-    go generate
-    go test
-
 ## MiGo types
 
 Syntax:
