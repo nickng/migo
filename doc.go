@@ -36,8 +36,13 @@
 //               | "recv" identifier
 //               | "tau"
 //               ;
+//    memprefix  = "read"  identifier
+//               | "write" identifier
+//               ;
 //    def-stmt   = "let" identifier = "newchan" identifier, digit+ ";"
 //               | prefix ";"
+//               | "letmem" identifier ";"
+//               | memprefix ";"
 //               | "close" identifier ";"
 //               | "call"  identifier "(" params ")" ";"
 //               | "spawn" identifier "(" params ")" ";"
