@@ -140,6 +140,12 @@ func (s *Scanner) scanIdent() Token {
 		return &ConstToken{t: tRECV, start: startPos, end: endPos}
 	case "tau":
 		return &ConstToken{t: tTAU, start: startPos, end: endPos}
+	case "letmem":
+		return &ConstToken{t: tLETMEM, start: startPos, end: endPos}
+	case "read":
+		return &ConstToken{t: tREAD, start: startPos, end: endPos}
+	case "write":
+		return &ConstToken{t: tWRITE, start: startPos, end: endPos}
 	}
 
 	if i, err := strconv.Atoi(buf.String()); err == nil {

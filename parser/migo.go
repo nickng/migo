@@ -25,6 +25,18 @@ func newchanStmt(name, ch string, size int) migo.Statement {
 	}
 }
 
+func readStmt(name string) migo.Statement {
+	return &migo.MemRead{Name: name}
+}
+
+func writeStmt(name string) migo.Statement {
+	return &migo.MemWrite{Name: name}
+}
+
+func newmemStmt(name string) migo.Statement {
+	return &migo.NewMem{Name: name}
+}
+
 func closeStmt(ch string) migo.Statement {
 	return &migo.CloseStatement{Chan: ch}
 }

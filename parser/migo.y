@@ -21,10 +21,10 @@ var prog *migo.Program
 }
 
 %token tCOMMA tDEF tEQ tLPAREN tRPAREN tCOLON tSEMICOLON
-%token tCALL tSPAWN tCASE tCLOSE tELSE tENDIF tENDSELECT tIF tLET tNEWCHAN tSELECT tSEND tRECV tTAU
+%token tCALL tSPAWN tCASE tCLOSE tELSE tENDIF tENDSELECT tIF tLET tNEWCHAN tSELECT tSEND tRECV tTAU tLETMEM tNEWVAR tREAD tWRITE
 %token <str> tIDENT
 %token <num> tDIGITS
-%type <stmt> prefix stmt
+%type <stmt> prefix memprefix stmt
 %type <fun> def
 %type <params> params
 %type <stmts> stmts defbody
@@ -59,8 +59,14 @@ prefix : tSEND tIDENT { $$ = sendStmt($2) }
        | tTAU         { $$ = tauStmt() }
        ;
 
+memprefix : tREAD  tIDENT { $$ = readStmt($2) }
+          | tWRITE tIDENT { $$ = writeStmt($2) }
+          ;
+
 stmt : tLET tIDENT tEQ tNEWCHAN tIDENT tCOMMA tDIGITS tSEMICOLON { $$ = newchanStmt($2, $5, $7) }
      | prefix                                         tSEMICOLON { $$ = $1 }
+     | tLETMEM tIDENT                                 tSEMICOLON { $$ = newmemStmt($2) }
+     | memprefix                                      tSEMICOLON { $$ = $1 }
      | tCLOSE tIDENT                                  tSEMICOLON { $$ = closeStmt($2) }
      | tCALL  tIDENT tLPAREN params tRPAREN           tSEMICOLON { $$ = callStmt($2, $4) }
      | tSPAWN tIDENT tLPAREN params tRPAREN           tSEMICOLON { $$ = spawnStmt($2, $4) }

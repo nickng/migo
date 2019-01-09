@@ -427,3 +427,30 @@ type RecvStatement struct {
 func (s *RecvStatement) String() string {
 	return fmt.Sprintf("recv %s", s.Chan)
 }
+
+// NewMem creates a new memory or variable reference.
+type NewMem struct {
+	Name string
+}
+
+func (s *NewMem) String() string {
+	return fmt.Sprintf("letmem %s", s.Name)
+}
+
+// MemRead is a memory read statement.
+type MemRead struct {
+	Name string
+}
+
+func (s *MemRead) String() string {
+	return fmt.Sprintf("read %s", s.Name)
+}
+
+// MemWrite is a memory write statement.
+type MemWrite struct {
+	Name string
+}
+
+func (s *MemWrite) String() string {
+	return fmt.Sprintf("write %s", s.Name)
+}
