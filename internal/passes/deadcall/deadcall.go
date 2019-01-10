@@ -3,7 +3,7 @@
 // Dead functions calls are calls (or spawns) to functions that are not defined.
 package deadcall
 
-import "github.com/nickng/migo"
+import "github.com/nickng/migo/v3"
 
 // Remove removes undefined function calls and spawns.
 func Remove(prog *migo.Program) {

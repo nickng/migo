@@ -1,1 +1,1 @@
-module github.com/nickng/migo
+module github.com/nickng/migo/v3

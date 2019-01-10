@@ -7,7 +7,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/nickng/migo"
+	"github.com/nickng/migo/v3"
 )
 
 // Graph is a control flow graph.

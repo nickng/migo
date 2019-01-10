@@ -1,9 +1,9 @@
 package migoutil
 
 import (
-	"github.com/nickng/migo"
-	"github.com/nickng/migo/internal/passes/deadcall"
-	"github.com/nickng/migo/internal/passes/taufunc"
+	"github.com/nickng/migo/v3"
+	"github.com/nickng/migo/v3/internal/passes/deadcall"
+	"github.com/nickng/migo/v3/internal/passes/taufunc"
 )
 
 // SimplifyProgram takes the input Program prog and reduce it

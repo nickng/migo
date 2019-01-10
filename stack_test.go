@@ -3,7 +3,7 @@ package migo_test
 import (
 	"testing"
 
-	"github.com/nickng/migo"
+	"github.com/nickng/migo/v3"
 )
 
 func TestStmtsStack(t *testing.T) {

@@ -3,7 +3,8 @@ package parser
 
 import (
 	"io"
-	"github.com/nickng/migo"
+
+	"github.com/nickng/migo/v3"
 )
 
 var prog *migo.Program

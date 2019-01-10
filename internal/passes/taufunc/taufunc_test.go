@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nickng/migo/parser"
+	"github.com/nickng/migo/v3/parser"
 )
 
 // main, send, recv should remain after removing empty.

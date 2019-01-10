@@ -3,7 +3,7 @@ package parser
 // Helper functions for yacc parser
 // These functions wrap MiGo AST
 
-import "github.com/nickng/migo"
+import "github.com/nickng/migo/v3"
 
 func sendStmt(ch string) *migo.SendStatement {
 	return &migo.SendStatement{Chan: ch}

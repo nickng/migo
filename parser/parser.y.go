@@ -8,13 +8,14 @@ import __yyfmt__ "fmt"
 //line migo.y:2
 
 import (
-	"github.com/nickng/migo"
 	"io"
+
+	"github.com/nickng/migo/v3"
 )
 
 var prog *migo.Program
 
-//line migo.y:12
+//line migo.y:13
 type migoSymType struct {
 	yys    int
 	str    string
@@ -93,7 +94,7 @@ const migoEofCode = 1
 const migoErrCode = 2
 const migoInitialStackSize = 16
 
-//line migo.y:81
+//line migo.y:82
 
 // Parse is the entry point to the migo type parser
 func Parse(r io.Reader) (*migo.Program, error) {
@@ -530,7 +531,7 @@ migodefault:
 
 	case 1:
 		migoDollar = migoS[migopt-1 : migopt+1]
-//line migo.y:37
+//line migo.y:38
 		{
 			prog = migo.NewProgram()
 			migoVAL.prog = prog
@@ -538,13 +539,13 @@ migodefault:
 		}
 	case 2:
 		migoDollar = migoS[migopt-2 : migopt+1]
-//line migo.y:38
+//line migo.y:39
 		{
 			migoDollar[1].prog.AddFunction(migoDollar[2].fun)
 		}
 	case 3:
 		migoDollar = migoS[migopt-7 : migopt+1]
-//line migo.y:41
+//line migo.y:42
 		{
 			migoVAL.fun = migo.NewFunction(migoDollar[2].str)
 			migoVAL.fun.AddParams(migoDollar[4].params...)
@@ -552,139 +553,139 @@ migodefault:
 		}
 	case 4:
 		migoDollar = migoS[migopt-0 : migopt+1]
-//line migo.y:44
+//line migo.y:45
 		{
 			migoVAL.params = params()
 		}
 	case 5:
 		migoDollar = migoS[migopt-1 : migopt+1]
-//line migo.y:45
+//line migo.y:46
 		{
 			migoVAL.params = params(plainParam(migoDollar[1].str))
 		}
 	case 6:
 		migoDollar = migoS[migopt-3 : migopt+1]
-//line migo.y:46
+//line migo.y:47
 		{
 			migoVAL.params = append(migoDollar[1].params, plainParam(migoDollar[3].str))
 		}
 	case 7:
 		migoDollar = migoS[migopt-1 : migopt+1]
-//line migo.y:49
+//line migo.y:50
 		{
 			migoVAL.stmts = stmts(migoDollar[1].stmt)
 		}
 	case 8:
 		migoDollar = migoS[migopt-2 : migopt+1]
-//line migo.y:50
+//line migo.y:51
 		{
 			migoVAL.stmts = append(migoDollar[1].stmts, migoDollar[2].stmt)
 		}
 	case 9:
 		migoDollar = migoS[migopt-0 : migopt+1]
-//line migo.y:53
+//line migo.y:54
 		{
 			migoVAL.stmts = stmts()
 		}
 	case 10:
 		migoDollar = migoS[migopt-2 : migopt+1]
-//line migo.y:54
+//line migo.y:55
 		{
 			migoVAL.stmts = append(migoDollar[1].stmts, migoDollar[2].stmt)
 		}
 	case 11:
 		migoDollar = migoS[migopt-2 : migopt+1]
-//line migo.y:57
+//line migo.y:58
 		{
 			migoVAL.stmt = sendStmt(migoDollar[2].str)
 		}
 	case 12:
 		migoDollar = migoS[migopt-2 : migopt+1]
-//line migo.y:58
+//line migo.y:59
 		{
 			migoVAL.stmt = recvStmt(migoDollar[2].str)
 		}
 	case 13:
 		migoDollar = migoS[migopt-1 : migopt+1]
-//line migo.y:59
+//line migo.y:60
 		{
 			migoVAL.stmt = tauStmt()
 		}
 	case 14:
 		migoDollar = migoS[migopt-2 : migopt+1]
-//line migo.y:62
+//line migo.y:63
 		{
 			migoVAL.stmt = readStmt(migoDollar[2].str)
 		}
 	case 15:
 		migoDollar = migoS[migopt-2 : migopt+1]
-//line migo.y:63
+//line migo.y:64
 		{
 			migoVAL.stmt = writeStmt(migoDollar[2].str)
 		}
 	case 16:
 		migoDollar = migoS[migopt-8 : migopt+1]
-//line migo.y:66
+//line migo.y:67
 		{
 			migoVAL.stmt = newchanStmt(migoDollar[2].str, migoDollar[5].str, migoDollar[7].num)
 		}
 	case 17:
 		migoDollar = migoS[migopt-2 : migopt+1]
-//line migo.y:67
+//line migo.y:68
 		{
 			migoVAL.stmt = migoDollar[1].stmt
 		}
 	case 18:
 		migoDollar = migoS[migopt-3 : migopt+1]
-//line migo.y:68
+//line migo.y:69
 		{
 			migoVAL.stmt = newmemStmt(migoDollar[2].str)
 		}
 	case 19:
 		migoDollar = migoS[migopt-2 : migopt+1]
-//line migo.y:69
+//line migo.y:70
 		{
 			migoVAL.stmt = migoDollar[1].stmt
 		}
 	case 20:
 		migoDollar = migoS[migopt-3 : migopt+1]
-//line migo.y:70
+//line migo.y:71
 		{
 			migoVAL.stmt = closeStmt(migoDollar[2].str)
 		}
 	case 21:
 		migoDollar = migoS[migopt-6 : migopt+1]
-//line migo.y:71
+//line migo.y:72
 		{
 			migoVAL.stmt = callStmt(migoDollar[2].str, migoDollar[4].params)
 		}
 	case 22:
 		migoDollar = migoS[migopt-6 : migopt+1]
-//line migo.y:72
+//line migo.y:73
 		{
 			migoVAL.stmt = spawnStmt(migoDollar[2].str, migoDollar[4].params)
 		}
 	case 23:
 		migoDollar = migoS[migopt-6 : migopt+1]
-//line migo.y:73
+//line migo.y:74
 		{
 			migoVAL.stmt = ifStmt(migoDollar[2].stmts, migoDollar[4].stmts)
 		}
 	case 24:
 		migoDollar = migoS[migopt-4 : migopt+1]
-//line migo.y:74
+//line migo.y:75
 		{
 			migoVAL.stmt = selectStmt(migoDollar[2].cases)
 		}
 	case 25:
 		migoDollar = migoS[migopt-0 : migopt+1]
-//line migo.y:77
+//line migo.y:78
 		{
 			migoVAL.cases = cases()
 		}
 	case 26:
 		migoDollar = migoS[migopt-5 : migopt+1]
-//line migo.y:78
+//line migo.y:79
 		{
 			migoVAL.cases = append(migoDollar[1].cases, append(stmts(migoDollar[3].stmt), migoDollar[5].stmts...))
 		}
