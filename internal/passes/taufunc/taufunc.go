@@ -117,6 +117,9 @@ func (t *tauFuncFinder) isTau(n *ctrlflow.Node, stmts []migo.Statement) bool {
 		case *migo.NewMem, *migo.MemRead, *migo.MemWrite:
 			istainted = true
 
+		case *migo.NewSyncMutex, *migo.SyncMutexLock, *migo.SyncMutexUnlock:
+			istainted = true
+
 		default:
 			log.Fatal(fmt.Errorf("passes/taufunc: statement kind not found: %T", stmt))
 		}
