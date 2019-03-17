@@ -454,3 +454,30 @@ type MemWrite struct {
 func (s *MemWrite) String() string {
 	return fmt.Sprintf("write %s", s.Name)
 }
+
+// NewSyncMutex is a sync.Mutex initialisation statement.
+type NewSyncMutex struct {
+	Identifier string
+}
+
+func (m *NewSyncMutex) String() string {
+	return fmt.Sprintf("letsync %s mutex", m.Identifier)
+}
+
+// SyncMutexLock is a sync.Mutex Lock statement.
+type SyncMutexLock struct {
+	Identifier string
+}
+
+func (m *SyncMutexLock) String() string {
+	return fmt.Sprintf("lock %s", m.Identifier)
+}
+
+// SyncMutexUnlock is a sync.Mutex Unlock statement.
+type SyncMutexUnlock struct {
+	Identifier string
+}
+
+func (m *SyncMutexUnlock) String() string {
+	return fmt.Sprintf("unlock %s", m.Identifier)
+}

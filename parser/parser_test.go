@@ -65,3 +65,43 @@ func TestParseMem(t *testing.T) {
 		t.Errorf("expected write x but got letmem %s", stmt3.Name)
 	}
 }
+
+func TestParseMutex(t *testing.T) {
+	s := `def main(): letsync a mutex; lock a; unlock a;`
+	parsed, err := Parse(strings.NewReader(s))
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	fn, found := parsed.Function("main")
+	if !found {
+		t.Error("cannot find main function")
+	}
+	if want, got := 3, len(fn.Stmts); want != got {
+		t.Errorf("expected %d statements but got %d", want, got)
+	}
+	stmt0, ok := fn.Stmts[0].(*migo.NewSyncMutex)
+	if !ok {
+		t.Errorf("expecting letsync statement but got %v", fn.Stmts[0])
+		t.FailNow()
+	}
+	if stmt0.Identifier != "a" {
+		t.Errorf("expected letsync a mutex but got %v", fn.Stmts[0])
+	}
+	stmt1, ok := fn.Stmts[1].(*migo.SyncMutexLock)
+	if !ok {
+		t.Errorf("expecting lock statement but got %v", fn.Stmts[1])
+		t.FailNow()
+	}
+	if stmt1.Identifier != "a" {
+		t.Errorf("expected lock a but got %v", fn.Stmts[1])
+	}
+	stmt2, ok := fn.Stmts[2].(*migo.SyncMutexUnlock)
+	if !ok {
+		t.Errorf("expecting lock statement but got %v", fn.Stmts[2])
+		t.FailNow()
+	}
+	if stmt2.Identifier != "a" {
+		t.Errorf("expected lock a but got %v", fn.Stmts[2])
+	}
+}

@@ -25,6 +25,18 @@ func newchanStmt(name, ch string, size int) migo.Statement {
 	}
 }
 
+func newMutex(ident string) *migo.NewSyncMutex {
+	return &migo.NewSyncMutex{Identifier: ident}
+}
+
+func lockStmt(ident string) *migo.SyncMutexLock {
+	return &migo.SyncMutexLock{Identifier: ident}
+}
+
+func unlockStmt(ident string) *migo.SyncMutexUnlock {
+	return &migo.SyncMutexUnlock{Identifier: ident}
+}
+
 func readStmt(name string) *migo.MemRead {
 	return &migo.MemRead{Name: name}
 }
