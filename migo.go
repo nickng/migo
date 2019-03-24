@@ -434,7 +434,7 @@ type NewMem struct {
 }
 
 func (s *NewMem) String() string {
-	return fmt.Sprintf("letmem %s", s.Name)
+	return fmt.Sprintf("letmem %s", nameFilter.Replace(s.Name))
 }
 
 // MemRead is a memory read statement.
@@ -443,7 +443,7 @@ type MemRead struct {
 }
 
 func (s *MemRead) String() string {
-	return fmt.Sprintf("read %s", s.Name)
+	return fmt.Sprintf("read %s", nameFilter.Replace(s.Name))
 }
 
 // MemWrite is a memory write statement.
@@ -452,32 +452,32 @@ type MemWrite struct {
 }
 
 func (s *MemWrite) String() string {
-	return fmt.Sprintf("write %s", s.Name)
+	return fmt.Sprintf("write %s", nameFilter.Replace(s.Name))
 }
 
 // NewSyncMutex is a sync.Mutex initialisation statement.
 type NewSyncMutex struct {
-	Identifier string
+	Name string
 }
 
 func (m *NewSyncMutex) String() string {
-	return fmt.Sprintf("letsync %s mutex", m.Identifier)
+	return fmt.Sprintf("letsync %s mutex", nameFilter.Replace(m.Name))
 }
 
 // SyncMutexLock is a sync.Mutex Lock statement.
 type SyncMutexLock struct {
-	Identifier string
+	Name string
 }
 
 func (m *SyncMutexLock) String() string {
-	return fmt.Sprintf("lock %s", m.Identifier)
+	return fmt.Sprintf("lock %s", nameFilter.Replace(m.Name))
 }
 
 // SyncMutexUnlock is a sync.Mutex Unlock statement.
 type SyncMutexUnlock struct {
-	Identifier string
+	Name string
 }
 
 func (m *SyncMutexUnlock) String() string {
-	return fmt.Sprintf("unlock %s", m.Identifier)
+	return fmt.Sprintf("unlock %s", nameFilter.Replace(m.Name))
 }

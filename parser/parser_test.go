@@ -85,7 +85,7 @@ func TestParseMutex(t *testing.T) {
 		t.Errorf("expecting letsync statement but got %v", fn.Stmts[0])
 		t.FailNow()
 	}
-	if stmt0.Identifier != "a" {
+	if stmt0.Name != "a" {
 		t.Errorf("expected letsync a mutex but got %v", fn.Stmts[0])
 	}
 	stmt1, ok := fn.Stmts[1].(*migo.SyncMutexLock)
@@ -93,7 +93,7 @@ func TestParseMutex(t *testing.T) {
 		t.Errorf("expecting lock statement but got %v", fn.Stmts[1])
 		t.FailNow()
 	}
-	if stmt1.Identifier != "a" {
+	if stmt1.Name != "a" {
 		t.Errorf("expected lock a but got %v", fn.Stmts[1])
 	}
 	stmt2, ok := fn.Stmts[2].(*migo.SyncMutexUnlock)
@@ -101,7 +101,7 @@ func TestParseMutex(t *testing.T) {
 		t.Errorf("expecting lock statement but got %v", fn.Stmts[2])
 		t.FailNow()
 	}
-	if stmt2.Identifier != "a" {
+	if stmt2.Name != "a" {
 		t.Errorf("expected lock a but got %v", fn.Stmts[2])
 	}
 }
