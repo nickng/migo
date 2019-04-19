@@ -455,6 +455,8 @@ func (s *MemWrite) String() string {
 	return fmt.Sprintf("write %s", nameFilter.Replace(s.Name))
 }
 
+// Mutex primitives
+
 // NewSyncMutex is a sync.Mutex initialisation statement.
 type NewSyncMutex struct {
 	Name string
@@ -480,4 +482,33 @@ type SyncMutexUnlock struct {
 
 func (m *SyncMutexUnlock) String() string {
 	return fmt.Sprintf("unlock %s", nameFilter.Replace(m.Name))
+}
+
+// RWMutex primitives
+
+// NewSyncRWMutex is a sync.RWMutex initialisation statement.
+type NewSyncRWMutex struct {
+	Name string
+}
+
+func (m *NewSyncRWMutex) String() string {
+	return fmt.Sprintf("letsync %s rwmutex", nameFilter.Replace(m.Name))
+}
+
+// SyncRWMutexRLock is a sync.RWMutex RLock statement.
+type SyncRWMutexRLock struct {
+	Name string
+}
+
+func (m *SyncRWMutexRLock) String() string {
+	return fmt.Sprintf("rlock %s", nameFilter.Replace(m.Name))
+}
+
+// SyncRWMutexRUnlock is a sync.RWMutex RUnlock statement.
+type SyncRWMutexRUnlock struct {
+	Name string
+}
+
+func (m *SyncRWMutexRUnlock) String() string {
+	return fmt.Sprintf("runlock %s", nameFilter.Replace(m.Name))
 }

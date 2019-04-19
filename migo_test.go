@@ -62,3 +62,22 @@ func TestMemSyntax(t *testing.T) {
 		t.Errorf("syntax mismatch, want:\n%s\ngot:\n%s", want, got)
 	}
 }
+
+func TestLockSyntax(t *testing.T) {
+	s := `def main():
+    letsync mu mutex;
+    letsync rmu rwmutex;
+    lock mu;
+    rlock rmu;
+    runlock mu;
+    unlock mu;
+`
+	r := strings.NewReader(s)
+	parsed, err := parser.Parse(r)
+	if err != nil {
+		t.Error(err)
+	}
+	if want, got := s, parsed.String(); want != got {
+		t.Errorf("syntax mismatch, want:\n%s\ngot:\n%s", want, got)
+	}
+}

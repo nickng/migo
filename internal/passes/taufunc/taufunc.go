@@ -120,6 +120,9 @@ func (t *tauFuncFinder) isTau(n *ctrlflow.Node, stmts []migo.Statement) bool {
 		case *migo.NewSyncMutex, *migo.SyncMutexLock, *migo.SyncMutexUnlock:
 			istainted = true
 
+		case *migo.NewSyncRWMutex, *migo.SyncRWMutexRLock, *migo.SyncRWMutexRUnlock:
+			istainted = true
+
 		default:
 			log.Fatal(fmt.Errorf("passes/taufunc: statement kind not found: %T", stmt))
 		}

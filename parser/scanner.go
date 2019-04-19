@@ -150,10 +150,16 @@ func (s *Scanner) scanIdent() Token {
 		return &ConstToken{t: tLETSYNC, start: startPos, end: endPos}
 	case "mutex":
 		return &ConstToken{t: tMUTEX, start: startPos, end: endPos}
+	case "rwmutex":
+		return &ConstToken{t: tRWMUTEX, start: startPos, end: endPos}
 	case "lock":
 		return &ConstToken{t: tLOCK, start: startPos, end: endPos}
 	case "unlock":
 		return &ConstToken{t: tUNLOCK, start: startPos, end: endPos}
+	case "rlock":
+		return &ConstToken{t: tRLOCK, start: startPos, end: endPos}
+	case "runlock":
+		return &ConstToken{t: tRUNLOCK, start: startPos, end: endPos}
 	}
 
 	if i, err := strconv.Atoi(buf.String()); err == nil {

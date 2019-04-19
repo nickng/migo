@@ -197,6 +197,9 @@ func (b *builder) visitStmts(parent *migo.Function, stmts []migo.Statement) {
 		case *migo.NewSyncMutex, *migo.SyncMutexLock, *migo.SyncMutexUnlock:
 			// no-op
 
+		case *migo.NewSyncRWMutex, *migo.SyncRWMutexRLock, *migo.SyncRWMutexRUnlock:
+			// no-op
+
 		default:
 			log.Fatal(fmt.Errorf("ctrlflow: statement kind not found: %T", stmt))
 		}

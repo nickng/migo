@@ -1,0 +1,741 @@
+
+state 0
+	$accept: .prog $end 
+
+	tDEF  shift 3
+	.  error
+
+	def  goto 2
+	prog  goto 1
+
+state 1
+	$accept:  prog.$end 
+	prog:  prog.def 
+
+	$end  accept
+	tDEF  shift 3
+	.  error
+
+	def  goto 4
+
+state 2
+	prog:  def.    (1)
+
+	.  reduce 1 (src line 38)
+
+
+state 3
+	def:  tDEF.tIDENT tLPAREN params tRPAREN tCOLON defbody 
+
+	tIDENT  shift 5
+	.  error
+
+
+state 4
+	prog:  prog def.    (2)
+
+	.  reduce 2 (src line 39)
+
+
+state 5
+	def:  tDEF tIDENT.tLPAREN params tRPAREN tCOLON defbody 
+
+	tLPAREN  shift 6
+	.  error
+
+
+state 6
+	def:  tDEF tIDENT tLPAREN.params tRPAREN tCOLON defbody 
+	params: .    (4)
+
+	tIDENT  shift 8
+	.  reduce 4 (src line 45)
+
+	params  goto 7
+
+state 7
+	def:  tDEF tIDENT tLPAREN params.tRPAREN tCOLON defbody 
+	params:  params.tCOMMA tIDENT 
+
+	tCOMMA  shift 10
+	tRPAREN  shift 9
+	.  error
+
+
+state 8
+	params:  tIDENT.    (5)
+
+	.  reduce 5 (src line 46)
+
+
+state 9
+	def:  tDEF tIDENT tLPAREN params tRPAREN.tCOLON defbody 
+
+	tCOLON  shift 11
+	.  error
+
+
+state 10
+	params:  params tCOMMA.tIDENT 
+
+	tIDENT  shift 12
+	.  error
+
+
+state 11
+	def:  tDEF tIDENT tLPAREN params tRPAREN tCOLON.defbody 
+
+	tCALL  shift 23
+	tSPAWN  shift 24
+	tCLOSE  shift 22
+	tIF  shift 25
+	tLET  shift 15
+	tSELECT  shift 26
+	tSEND  shift 27
+	tRECV  shift 28
+	tTAU  shift 29
+	tLETMEM  shift 17
+	tREAD  shift 30
+	tWRITE  shift 31
+	tLETSYNC  shift 19
+	tLOCK  shift 32
+	tUNLOCK  shift 33
+	tRLOCK  shift 34
+	tRUNLOCK  shift 35
+	.  error
+
+	prefix  goto 16
+	memprefix  goto 18
+	mutexprefix  goto 20
+	rwmutexprefix  goto 21
+	stmt  goto 14
+	defbody  goto 13
+
+state 12
+	params:  params tCOMMA tIDENT.    (6)
+
+	.  reduce 6 (src line 47)
+
+
+state 13
+	def:  tDEF tIDENT tLPAREN params tRPAREN tCOLON defbody.    (3)
+	defbody:  defbody.stmt 
+
+	tCALL  shift 23
+	tSPAWN  shift 24
+	tCLOSE  shift 22
+	tIF  shift 25
+	tLET  shift 15
+	tSELECT  shift 26
+	tSEND  shift 27
+	tRECV  shift 28
+	tTAU  shift 29
+	tLETMEM  shift 17
+	tREAD  shift 30
+	tWRITE  shift 31
+	tLETSYNC  shift 19
+	tLOCK  shift 32
+	tUNLOCK  shift 33
+	tRLOCK  shift 34
+	tRUNLOCK  shift 35
+	.  reduce 3 (src line 42)
+
+	prefix  goto 16
+	memprefix  goto 18
+	mutexprefix  goto 20
+	rwmutexprefix  goto 21
+	stmt  goto 36
+
+state 14
+	defbody:  stmt.    (7)
+
+	.  reduce 7 (src line 50)
+
+
+state 15
+	stmt:  tLET.tIDENT tEQ tNEWCHAN tIDENT tCOMMA tDIGITS tSEMICOLON 
+
+	tIDENT  shift 37
+	.  error
+
+
+state 16
+	stmt:  prefix.tSEMICOLON 
+
+	tSEMICOLON  shift 38
+	.  error
+
+
+state 17
+	stmt:  tLETMEM.tIDENT tSEMICOLON 
+
+	tIDENT  shift 39
+	.  error
+
+
+state 18
+	stmt:  memprefix.tSEMICOLON 
+
+	tSEMICOLON  shift 40
+	.  error
+
+
+state 19
+	stmt:  tLETSYNC.tIDENT tMUTEX tSEMICOLON 
+	stmt:  tLETSYNC.tIDENT tRWMUTEX tSEMICOLON 
+
+	tIDENT  shift 41
+	.  error
+
+
+state 20
+	stmt:  mutexprefix.tSEMICOLON 
+
+	tSEMICOLON  shift 42
+	.  error
+
+
+state 21
+	stmt:  rwmutexprefix.tSEMICOLON 
+
+	tSEMICOLON  shift 43
+	.  error
+
+
+state 22
+	stmt:  tCLOSE.tIDENT tSEMICOLON 
+
+	tIDENT  shift 44
+	.  error
+
+
+state 23
+	stmt:  tCALL.tIDENT tLPAREN params tRPAREN tSEMICOLON 
+
+	tIDENT  shift 45
+	.  error
+
+
+state 24
+	stmt:  tSPAWN.tIDENT tLPAREN params tRPAREN tSEMICOLON 
+
+	tIDENT  shift 46
+	.  error
+
+
+state 25
+	stmt:  tIF.stmts tELSE stmts tENDIF tSEMICOLON 
+	stmts: .    (9)
+
+	.  reduce 9 (src line 54)
+
+	stmts  goto 47
+
+state 26
+	stmt:  tSELECT.cases tENDSELECT tSEMICOLON 
+	cases: .    (33)
+
+	.  reduce 33 (src line 90)
+
+	cases  goto 48
+
+state 27
+	prefix:  tSEND.tIDENT 
+
+	tIDENT  shift 49
+	.  error
+
+
+state 28
+	prefix:  tRECV.tIDENT 
+
+	tIDENT  shift 50
+	.  error
+
+
+state 29
+	prefix:  tTAU.    (13)
+
+	.  reduce 13 (src line 60)
+
+
+state 30
+	memprefix:  tREAD.tIDENT 
+
+	tIDENT  shift 51
+	.  error
+
+
+state 31
+	memprefix:  tWRITE.tIDENT 
+
+	tIDENT  shift 52
+	.  error
+
+
+state 32
+	mutexprefix:  tLOCK.tIDENT 
+
+	tIDENT  shift 53
+	.  error
+
+
+state 33
+	mutexprefix:  tUNLOCK.tIDENT 
+
+	tIDENT  shift 54
+	.  error
+
+
+state 34
+	rwmutexprefix:  tRLOCK.tIDENT 
+
+	tIDENT  shift 55
+	.  error
+
+
+state 35
+	rwmutexprefix:  tRUNLOCK.tIDENT 
+
+	tIDENT  shift 56
+	.  error
+
+
+state 36
+	defbody:  defbody stmt.    (8)
+
+	.  reduce 8 (src line 51)
+
+
+state 37
+	stmt:  tLET tIDENT.tEQ tNEWCHAN tIDENT tCOMMA tDIGITS tSEMICOLON 
+
+	tEQ  shift 57
+	.  error
+
+
+state 38
+	stmt:  prefix tSEMICOLON.    (21)
+
+	.  reduce 21 (src line 76)
+
+
+state 39
+	stmt:  tLETMEM tIDENT.tSEMICOLON 
+
+	tSEMICOLON  shift 58
+	.  error
+
+
+state 40
+	stmt:  memprefix tSEMICOLON.    (23)
+
+	.  reduce 23 (src line 78)
+
+
+state 41
+	stmt:  tLETSYNC tIDENT.tMUTEX tSEMICOLON 
+	stmt:  tLETSYNC tIDENT.tRWMUTEX tSEMICOLON 
+
+	tMUTEX  shift 59
+	tRWMUTEX  shift 60
+	.  error
+
+
+state 42
+	stmt:  mutexprefix tSEMICOLON.    (26)
+
+	.  reduce 26 (src line 81)
+
+
+state 43
+	stmt:  rwmutexprefix tSEMICOLON.    (27)
+
+	.  reduce 27 (src line 82)
+
+
+state 44
+	stmt:  tCLOSE tIDENT.tSEMICOLON 
+
+	tSEMICOLON  shift 61
+	.  error
+
+
+state 45
+	stmt:  tCALL tIDENT.tLPAREN params tRPAREN tSEMICOLON 
+
+	tLPAREN  shift 62
+	.  error
+
+
+state 46
+	stmt:  tSPAWN tIDENT.tLPAREN params tRPAREN tSEMICOLON 
+
+	tLPAREN  shift 63
+	.  error
+
+
+state 47
+	stmts:  stmts.stmt 
+	stmt:  tIF stmts.tELSE stmts tENDIF tSEMICOLON 
+
+	tCALL  shift 23
+	tSPAWN  shift 24
+	tCLOSE  shift 22
+	tELSE  shift 65
+	tIF  shift 25
+	tLET  shift 15
+	tSELECT  shift 26
+	tSEND  shift 27
+	tRECV  shift 28
+	tTAU  shift 29
+	tLETMEM  shift 17
+	tREAD  shift 30
+	tWRITE  shift 31
+	tLETSYNC  shift 19
+	tLOCK  shift 32
+	tUNLOCK  shift 33
+	tRLOCK  shift 34
+	tRUNLOCK  shift 35
+	.  error
+
+	prefix  goto 16
+	memprefix  goto 18
+	mutexprefix  goto 20
+	rwmutexprefix  goto 21
+	stmt  goto 64
+
+state 48
+	stmt:  tSELECT cases.tENDSELECT tSEMICOLON 
+	cases:  cases.tCASE prefix tSEMICOLON stmts 
+
+	tCASE  shift 67
+	tENDSELECT  shift 66
+	.  error
+
+
+state 49
+	prefix:  tSEND tIDENT.    (11)
+
+	.  reduce 11 (src line 58)
+
+
+state 50
+	prefix:  tRECV tIDENT.    (12)
+
+	.  reduce 12 (src line 59)
+
+
+state 51
+	memprefix:  tREAD tIDENT.    (14)
+
+	.  reduce 14 (src line 63)
+
+
+state 52
+	memprefix:  tWRITE tIDENT.    (15)
+
+	.  reduce 15 (src line 64)
+
+
+state 53
+	mutexprefix:  tLOCK tIDENT.    (16)
+
+	.  reduce 16 (src line 67)
+
+
+state 54
+	mutexprefix:  tUNLOCK tIDENT.    (17)
+
+	.  reduce 17 (src line 68)
+
+
+state 55
+	rwmutexprefix:  tRLOCK tIDENT.    (18)
+
+	.  reduce 18 (src line 71)
+
+
+state 56
+	rwmutexprefix:  tRUNLOCK tIDENT.    (19)
+
+	.  reduce 19 (src line 72)
+
+
+state 57
+	stmt:  tLET tIDENT tEQ.tNEWCHAN tIDENT tCOMMA tDIGITS tSEMICOLON 
+
+	tNEWCHAN  shift 68
+	.  error
+
+
+state 58
+	stmt:  tLETMEM tIDENT tSEMICOLON.    (22)
+
+	.  reduce 22 (src line 77)
+
+
+state 59
+	stmt:  tLETSYNC tIDENT tMUTEX.tSEMICOLON 
+
+	tSEMICOLON  shift 69
+	.  error
+
+
+state 60
+	stmt:  tLETSYNC tIDENT tRWMUTEX.tSEMICOLON 
+
+	tSEMICOLON  shift 70
+	.  error
+
+
+state 61
+	stmt:  tCLOSE tIDENT tSEMICOLON.    (28)
+
+	.  reduce 28 (src line 83)
+
+
+state 62
+	stmt:  tCALL tIDENT tLPAREN.params tRPAREN tSEMICOLON 
+	params: .    (4)
+
+	tIDENT  shift 8
+	.  reduce 4 (src line 45)
+
+	params  goto 71
+
+state 63
+	stmt:  tSPAWN tIDENT tLPAREN.params tRPAREN tSEMICOLON 
+	params: .    (4)
+
+	tIDENT  shift 8
+	.  reduce 4 (src line 45)
+
+	params  goto 72
+
+state 64
+	stmts:  stmts stmt.    (10)
+
+	.  reduce 10 (src line 55)
+
+
+state 65
+	stmt:  tIF stmts tELSE.stmts tENDIF tSEMICOLON 
+	stmts: .    (9)
+
+	.  reduce 9 (src line 54)
+
+	stmts  goto 73
+
+state 66
+	stmt:  tSELECT cases tENDSELECT.tSEMICOLON 
+
+	tSEMICOLON  shift 74
+	.  error
+
+
+state 67
+	cases:  cases tCASE.prefix tSEMICOLON stmts 
+
+	tSEND  shift 27
+	tRECV  shift 28
+	tTAU  shift 29
+	.  error
+
+	prefix  goto 75
+
+state 68
+	stmt:  tLET tIDENT tEQ tNEWCHAN.tIDENT tCOMMA tDIGITS tSEMICOLON 
+
+	tIDENT  shift 76
+	.  error
+
+
+state 69
+	stmt:  tLETSYNC tIDENT tMUTEX tSEMICOLON.    (24)
+
+	.  reduce 24 (src line 79)
+
+
+state 70
+	stmt:  tLETSYNC tIDENT tRWMUTEX tSEMICOLON.    (25)
+
+	.  reduce 25 (src line 80)
+
+
+state 71
+	params:  params.tCOMMA tIDENT 
+	stmt:  tCALL tIDENT tLPAREN params.tRPAREN tSEMICOLON 
+
+	tCOMMA  shift 10
+	tRPAREN  shift 77
+	.  error
+
+
+state 72
+	params:  params.tCOMMA tIDENT 
+	stmt:  tSPAWN tIDENT tLPAREN params.tRPAREN tSEMICOLON 
+
+	tCOMMA  shift 10
+	tRPAREN  shift 78
+	.  error
+
+
+state 73
+	stmts:  stmts.stmt 
+	stmt:  tIF stmts tELSE stmts.tENDIF tSEMICOLON 
+
+	tCALL  shift 23
+	tSPAWN  shift 24
+	tCLOSE  shift 22
+	tENDIF  shift 79
+	tIF  shift 25
+	tLET  shift 15
+	tSELECT  shift 26
+	tSEND  shift 27
+	tRECV  shift 28
+	tTAU  shift 29
+	tLETMEM  shift 17
+	tREAD  shift 30
+	tWRITE  shift 31
+	tLETSYNC  shift 19
+	tLOCK  shift 32
+	tUNLOCK  shift 33
+	tRLOCK  shift 34
+	tRUNLOCK  shift 35
+	.  error
+
+	prefix  goto 16
+	memprefix  goto 18
+	mutexprefix  goto 20
+	rwmutexprefix  goto 21
+	stmt  goto 64
+
+state 74
+	stmt:  tSELECT cases tENDSELECT tSEMICOLON.    (32)
+
+	.  reduce 32 (src line 87)
+
+
+state 75
+	cases:  cases tCASE prefix.tSEMICOLON stmts 
+
+	tSEMICOLON  shift 80
+	.  error
+
+
+state 76
+	stmt:  tLET tIDENT tEQ tNEWCHAN tIDENT.tCOMMA tDIGITS tSEMICOLON 
+
+	tCOMMA  shift 81
+	.  error
+
+
+state 77
+	stmt:  tCALL tIDENT tLPAREN params tRPAREN.tSEMICOLON 
+
+	tSEMICOLON  shift 82
+	.  error
+
+
+state 78
+	stmt:  tSPAWN tIDENT tLPAREN params tRPAREN.tSEMICOLON 
+
+	tSEMICOLON  shift 83
+	.  error
+
+
+state 79
+	stmt:  tIF stmts tELSE stmts tENDIF.tSEMICOLON 
+
+	tSEMICOLON  shift 84
+	.  error
+
+
+state 80
+	cases:  cases tCASE prefix tSEMICOLON.stmts 
+	stmts: .    (9)
+
+	.  reduce 9 (src line 54)
+
+	stmts  goto 85
+
+state 81
+	stmt:  tLET tIDENT tEQ tNEWCHAN tIDENT tCOMMA.tDIGITS tSEMICOLON 
+
+	tDIGITS  shift 86
+	.  error
+
+
+state 82
+	stmt:  tCALL tIDENT tLPAREN params tRPAREN tSEMICOLON.    (29)
+
+	.  reduce 29 (src line 84)
+
+
+state 83
+	stmt:  tSPAWN tIDENT tLPAREN params tRPAREN tSEMICOLON.    (30)
+
+	.  reduce 30 (src line 85)
+
+
+state 84
+	stmt:  tIF stmts tELSE stmts tENDIF tSEMICOLON.    (31)
+
+	.  reduce 31 (src line 86)
+
+
+state 85
+	stmts:  stmts.stmt 
+	cases:  cases tCASE prefix tSEMICOLON stmts.    (34)
+
+	tCALL  shift 23
+	tSPAWN  shift 24
+	tCLOSE  shift 22
+	tIF  shift 25
+	tLET  shift 15
+	tSELECT  shift 26
+	tSEND  shift 27
+	tRECV  shift 28
+	tTAU  shift 29
+	tLETMEM  shift 17
+	tREAD  shift 30
+	tWRITE  shift 31
+	tLETSYNC  shift 19
+	tLOCK  shift 32
+	tUNLOCK  shift 33
+	tRLOCK  shift 34
+	tRUNLOCK  shift 35
+	.  reduce 34 (src line 91)
+
+	prefix  goto 16
+	memprefix  goto 18
+	mutexprefix  goto 20
+	rwmutexprefix  goto 21
+	stmt  goto 64
+
+state 86
+	stmt:  tLET tIDENT tEQ tNEWCHAN tIDENT tCOMMA tDIGITS.tSEMICOLON 
+
+	tSEMICOLON  shift 87
+	.  error
+
+
+state 87
+	stmt:  tLET tIDENT tEQ tNEWCHAN tIDENT tCOMMA tDIGITS tSEMICOLON.    (20)
+
+	.  reduce 20 (src line 75)
+
+
+36 terminals, 12 nonterminals
+35 grammar rules, 88/8000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+61 working sets used
+memory: parser 26/120000
+51 extra closures
+144 shift entries, 1 exceptions
+19 goto entries
+18 entries saved by goto default
+Optimizer space used: output 126/120000
+126 table entries, 0 zero
+maximum spread: 36, maximum offset: 80

@@ -56,8 +56,11 @@ const tLETSYNC = 57370
 const tMUTEX = 57371
 const tLOCK = 57372
 const tUNLOCK = 57373
-const tIDENT = 57374
-const tDIGITS = 57375
+const tRWMUTEX = 57374
+const tRLOCK = 57375
+const tRUNLOCK = 57376
+const tIDENT = 57377
+const tDIGITS = 57378
 
 var migoToknames = [...]string{
 	"$end",
@@ -91,6 +94,9 @@ var migoToknames = [...]string{
 	"tMUTEX",
 	"tLOCK",
 	"tUNLOCK",
+	"tRWMUTEX",
+	"tRLOCK",
+	"tRUNLOCK",
 	"tIDENT",
 	"tDIGITS",
 }
@@ -100,7 +106,7 @@ const migoEofCode = 1
 const migoErrCode = 2
 const migoInitialStackSize = 16
 
-//line migo.y:88
+//line migo.y:94
 
 // Parse is the entry point to the migo type parser
 func Parse(r io.Reader) (*migo.Program, error) {
@@ -123,74 +129,78 @@ var migoExca = [...]int{
 
 const migoPrivate = 57344
 
-const migoLast = 114
+const migoLast = 126
 
 var migoAct = [...]int{
 
-	43, 16, 22, 23, 7, 21, 78, 71, 68, 24,
-	15, 8, 25, 26, 27, 28, 17, 29, 30, 19,
-	50, 31, 32, 22, 23, 49, 21, 58, 48, 47,
-	24, 15, 46, 25, 26, 27, 28, 17, 29, 30,
-	19, 45, 31, 32, 79, 42, 41, 40, 38, 36,
-	34, 12, 5, 53, 26, 27, 28, 61, 76, 65,
-	63, 64, 67, 11, 22, 23, 75, 21, 74, 72,
-	66, 24, 15, 77, 25, 26, 27, 28, 17, 29,
-	30, 19, 60, 31, 32, 57, 59, 62, 54, 52,
-	39, 37, 35, 56, 10, 55, 10, 14, 70, 33,
-	69, 10, 6, 73, 51, 9, 3, 2, 1, 4,
-	44, 13, 20, 18,
+	47, 16, 23, 24, 7, 22, 86, 79, 76, 25,
+	15, 8, 26, 27, 28, 29, 17, 30, 31, 19,
+	56, 32, 33, 55, 34, 35, 23, 24, 54, 22,
+	65, 53, 52, 25, 15, 51, 26, 27, 28, 29,
+	17, 30, 31, 19, 50, 32, 33, 49, 34, 35,
+	63, 46, 45, 44, 41, 39, 37, 12, 5, 59,
+	68, 87, 60, 27, 28, 29, 73, 71, 72, 75,
+	67, 11, 23, 24, 66, 22, 84, 83, 82, 25,
+	15, 85, 26, 27, 28, 29, 17, 30, 31, 19,
+	64, 32, 33, 80, 34, 35, 74, 70, 69, 61,
+	58, 43, 14, 42, 36, 40, 38, 10, 10, 10,
+	81, 78, 77, 9, 62, 6, 57, 3, 2, 1,
+	4, 48, 13, 21, 20, 18,
 }
 var migoPact = [...]int{
 
-	101, 101, -1000, 20, -1000, 95, -21, 97, -1000, 54,
-	19, 53, -1000, 53, -1000, 18, 82, 17, 81, 16,
-	80, 15, 14, 13, -1000, -1000, 9, 0, -1000, -3,
-	-4, -7, -12, -1000, 98, -1000, 79, -1000, 24, -1000,
-	78, 88, 86, 12, 69, -1000, -1000, -1000, -1000, -1000,
-	-1000, 37, -1000, 77, -1000, -21, -21, -1000, -1000, 60,
-	32, -24, -1000, 92, 90, -9, -1000, 59, 99, 58,
-	56, 48, -1000, -27, -1000, -1000, -1000, 53, 34, -1000,
+	112, 112, -1000, 23, -1000, 108, -24, 105, -1000, 62,
+	22, 61, -1000, 61, -1000, 21, 96, 20, 95, 19,
+	93, 91, 18, 17, 16, -1000, -1000, 12, 9, -1000,
+	0, -3, -4, -7, -12, -15, -1000, 110, -1000, 90,
+	-1000, 30, -1000, -1000, 89, 107, 43, 15, 57, -1000,
+	-1000, -1000, -1000, -1000, -1000, -1000, -1000, 40, -1000, 88,
+	87, -1000, -24, -24, -1000, -1000, 86, 41, -27, -1000,
+	-1000, 104, 103, -9, -1000, 83, 106, 68, 67, 66,
+	-1000, -30, -1000, -1000, -1000, 61, 51, -1000,
 }
 var migoPgo = [...]int{
 
-	0, 1, 113, 112, 85, 107, 4, 0, 111, 110,
-	108,
+	0, 1, 125, 124, 123, 90, 118, 4, 0, 122,
+	121, 119,
 }
 var migoR1 = [...]int{
 
-	0, 10, 10, 5, 6, 6, 6, 8, 8, 7,
-	7, 1, 1, 1, 2, 2, 3, 3, 4, 4,
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 9,
-	9,
+	0, 11, 11, 6, 7, 7, 7, 9, 9, 8,
+	8, 1, 1, 1, 2, 2, 3, 3, 4, 4,
+	5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+	5, 5, 5, 10, 10,
 }
 var migoR2 = [...]int{
 
 	0, 1, 2, 7, 0, 1, 3, 1, 2, 0,
-	2, 2, 2, 1, 2, 2, 2, 2, 8, 2,
-	3, 2, 4, 2, 3, 6, 6, 6, 4, 0,
-	5,
+	2, 2, 2, 1, 2, 2, 2, 2, 2, 2,
+	8, 2, 3, 2, 4, 4, 2, 2, 3, 6,
+	6, 6, 4, 0, 5,
 }
 var migoChk = [...]int{
 
-	-1000, -10, -5, 5, -5, 32, 7, -6, 32, 8,
-	4, 9, 32, -8, -4, 19, -1, 25, -2, 28,
-	-3, 14, 11, 12, 18, 21, 22, 23, 24, 26,
-	27, 30, 31, -4, 32, 10, 32, 10, 32, 10,
-	32, 32, 32, -7, -9, 32, 32, 32, 32, 32,
-	32, 6, 10, 29, 10, 7, 7, -4, 15, 17,
-	13, 20, 10, -6, -6, -7, 10, -1, 32, 8,
-	8, 16, 10, 4, 10, 10, 10, -7, 33, 10,
+	-1000, -11, -6, 5, -6, 35, 7, -7, 35, 8,
+	4, 9, 35, -9, -5, 19, -1, 25, -2, 28,
+	-3, -4, 14, 11, 12, 18, 21, 22, 23, 24,
+	26, 27, 30, 31, 33, 34, -5, 35, 10, 35,
+	10, 35, 10, 10, 35, 35, 35, -8, -10, 35,
+	35, 35, 35, 35, 35, 35, 35, 6, 10, 29,
+	32, 10, 7, 7, -5, 15, 17, 13, 20, 10,
+	10, -7, -7, -8, 10, -1, 35, 8, 8, 16,
+	10, 4, 10, 10, 10, -8, 36, 10,
 }
 var migoDef = [...]int{
 
 	0, -2, 1, 0, 2, 0, 4, 0, 5, 0,
 	0, 0, 6, 3, 7, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 9, 29, 0, 0, 13, 0,
-	0, 0, 0, 8, 0, 19, 0, 21, 0, 23,
-	0, 0, 0, 0, 0, 11, 12, 14, 15, 16,
-	17, 0, 20, 0, 24, 4, 4, 10, 9, 0,
-	0, 0, 22, 0, 0, 0, 28, 0, 0, 0,
-	0, 0, 9, 0, 25, 26, 27, 30, 0, 18,
+	0, 0, 0, 0, 0, 9, 33, 0, 0, 13,
+	0, 0, 0, 0, 0, 0, 8, 0, 21, 0,
+	23, 0, 26, 27, 0, 0, 0, 0, 0, 11,
+	12, 14, 15, 16, 17, 18, 19, 0, 22, 0,
+	0, 28, 4, 4, 10, 9, 0, 0, 0, 24,
+	25, 0, 0, 0, 32, 0, 0, 0, 0, 0,
+	9, 0, 29, 30, 31, 34, 0, 20,
 }
 var migoTok1 = [...]int{
 
@@ -201,7 +211,7 @@ var migoTok2 = [...]int{
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 	12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
 	22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-	32, 33,
+	32, 33, 34, 35, 36,
 }
 var migoTok3 = [...]int{
 	0,
@@ -651,80 +661,104 @@ migodefault:
 			migoVAL.stmt = unlockStmt(migoDollar[2].str)
 		}
 	case 18:
-		migoDollar = migoS[migopt-8 : migopt+1]
+		migoDollar = migoS[migopt-2 : migopt+1]
 //line migo.y:71
 		{
-			migoVAL.stmt = newchanStmt(migoDollar[2].str, migoDollar[5].str, migoDollar[7].num)
+			migoVAL.stmt = rlockStmt(migoDollar[2].str)
 		}
 	case 19:
 		migoDollar = migoS[migopt-2 : migopt+1]
 //line migo.y:72
 		{
-			migoVAL.stmt = migoDollar[1].stmt
+			migoVAL.stmt = runlockStmt(migoDollar[2].str)
 		}
 	case 20:
-		migoDollar = migoS[migopt-3 : migopt+1]
-//line migo.y:73
-		{
-			migoVAL.stmt = newmemStmt(migoDollar[2].str)
-		}
-	case 21:
-		migoDollar = migoS[migopt-2 : migopt+1]
-//line migo.y:74
-		{
-			migoVAL.stmt = migoDollar[1].stmt
-		}
-	case 22:
-		migoDollar = migoS[migopt-4 : migopt+1]
+		migoDollar = migoS[migopt-8 : migopt+1]
 //line migo.y:75
 		{
-			migoVAL.stmt = newMutex(migoDollar[2].str)
+			migoVAL.stmt = newchanStmt(migoDollar[2].str, migoDollar[5].str, migoDollar[7].num)
 		}
-	case 23:
+	case 21:
 		migoDollar = migoS[migopt-2 : migopt+1]
 //line migo.y:76
 		{
 			migoVAL.stmt = migoDollar[1].stmt
 		}
-	case 24:
+	case 22:
 		migoDollar = migoS[migopt-3 : migopt+1]
 //line migo.y:77
 		{
-			migoVAL.stmt = closeStmt(migoDollar[2].str)
+			migoVAL.stmt = newmemStmt(migoDollar[2].str)
+		}
+	case 23:
+		migoDollar = migoS[migopt-2 : migopt+1]
+//line migo.y:78
+		{
+			migoVAL.stmt = migoDollar[1].stmt
+		}
+	case 24:
+		migoDollar = migoS[migopt-4 : migopt+1]
+//line migo.y:79
+		{
+			migoVAL.stmt = newMutex(migoDollar[2].str)
 		}
 	case 25:
+		migoDollar = migoS[migopt-4 : migopt+1]
+//line migo.y:80
+		{
+			migoVAL.stmt = newRWMutex(migoDollar[2].str)
+		}
+	case 26:
+		migoDollar = migoS[migopt-2 : migopt+1]
+//line migo.y:81
+		{
+			migoVAL.stmt = migoDollar[1].stmt
+		}
+	case 27:
+		migoDollar = migoS[migopt-2 : migopt+1]
+//line migo.y:82
+		{
+			migoVAL.stmt = migoDollar[1].stmt
+		}
+	case 28:
+		migoDollar = migoS[migopt-3 : migopt+1]
+//line migo.y:83
+		{
+			migoVAL.stmt = closeStmt(migoDollar[2].str)
+		}
+	case 29:
 		migoDollar = migoS[migopt-6 : migopt+1]
-//line migo.y:78
+//line migo.y:84
 		{
 			migoVAL.stmt = callStmt(migoDollar[2].str, migoDollar[4].params)
 		}
-	case 26:
+	case 30:
 		migoDollar = migoS[migopt-6 : migopt+1]
-//line migo.y:79
+//line migo.y:85
 		{
 			migoVAL.stmt = spawnStmt(migoDollar[2].str, migoDollar[4].params)
 		}
-	case 27:
+	case 31:
 		migoDollar = migoS[migopt-6 : migopt+1]
-//line migo.y:80
+//line migo.y:86
 		{
 			migoVAL.stmt = ifStmt(migoDollar[2].stmts, migoDollar[4].stmts)
 		}
-	case 28:
+	case 32:
 		migoDollar = migoS[migopt-4 : migopt+1]
-//line migo.y:81
+//line migo.y:87
 		{
 			migoVAL.stmt = selectStmt(migoDollar[2].cases)
 		}
-	case 29:
+	case 33:
 		migoDollar = migoS[migopt-0 : migopt+1]
-//line migo.y:84
+//line migo.y:90
 		{
 			migoVAL.cases = cases()
 		}
-	case 30:
+	case 34:
 		migoDollar = migoS[migopt-5 : migopt+1]
-//line migo.y:85
+//line migo.y:91
 		{
 			migoVAL.cases = append(migoDollar[1].cases, append(stmts(migoDollar[3].stmt), migoDollar[5].stmts...))
 		}

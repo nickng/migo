@@ -37,6 +37,18 @@ func unlockStmt(name string) *migo.SyncMutexUnlock {
 	return &migo.SyncMutexUnlock{Name: name}
 }
 
+func newRWMutex(name string) *migo.NewSyncRWMutex {
+	return &migo.NewSyncRWMutex{Name: name}
+}
+
+func rlockStmt(name string) *migo.SyncRWMutexRLock {
+	return &migo.SyncRWMutexRLock{Name: name}
+}
+
+func runlockStmt(name string) *migo.SyncRWMutexRUnlock {
+	return &migo.SyncRWMutexRUnlock{Name: name}
+}
+
 func readStmt(name string) *migo.MemRead {
 	return &migo.MemRead{Name: name}
 }
