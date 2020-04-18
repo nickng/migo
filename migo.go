@@ -430,11 +430,11 @@ func (s *RecvStatement) String() string {
 
 // NewMem creates a new memory or variable reference.
 type NewMem struct {
-	Name string
+	Name NamedVar
 }
 
 func (s *NewMem) String() string {
-	return fmt.Sprintf("letmem %s", nameFilter.Replace(s.Name))
+	return fmt.Sprintf("letmem %s", s.Name.Name())
 }
 
 // MemRead is a memory read statement.
@@ -459,11 +459,11 @@ func (s *MemWrite) String() string {
 
 // NewSyncMutex is a sync.Mutex initialisation statement.
 type NewSyncMutex struct {
-	Name string
+	Name NamedVar
 }
 
 func (m *NewSyncMutex) String() string {
-	return fmt.Sprintf("letsync %s mutex", nameFilter.Replace(m.Name))
+	return fmt.Sprintf("letsync %s mutex", m.Name.Name())
 }
 
 // SyncMutexLock is a sync.Mutex Lock statement.
@@ -488,11 +488,11 @@ func (m *SyncMutexUnlock) String() string {
 
 // NewSyncRWMutex is a sync.RWMutex initialisation statement.
 type NewSyncRWMutex struct {
-	Name string
+	Name NamedVar
 }
 
 func (m *NewSyncRWMutex) String() string {
-	return fmt.Sprintf("letsync %s rwmutex", nameFilter.Replace(m.Name))
+	return fmt.Sprintf("letsync %s rwmutex", m.Name.Name())
 }
 
 // SyncRWMutexRLock is a sync.RWMutex RLock statement.
